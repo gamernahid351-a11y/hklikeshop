@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getLandingData } from "@/server/landing.functions";
+import { getLandingData } from "@/lib/landing.functions";
 import {
   Flame, ShoppingCart, Settings as SettingsIcon, User as UserIcon,
   ShieldCheck, Rocket, Headphones, Heart, Eye, KeyRound,
