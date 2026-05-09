@@ -1,0 +1,950 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  public: {
+    Tables: {
+      app_settings: {
+        Row: {
+          admin_telegram: string
+          banner_api_url: string
+          bkash_number: string
+          bkash_number_guild: string
+          bkash_number_visit: string
+          coupon_price_like: number
+          coupon_price_panel: number
+          coupon_price_visit: number
+          id: number
+          like_api_url: string
+          logo_url: string | null
+          payment_instructions: string
+          rupantor_enabled: boolean
+          updated_at: string
+          visit_api_url: string
+        }
+        Insert: {
+          admin_telegram?: string
+          banner_api_url?: string
+          bkash_number?: string
+          bkash_number_guild?: string
+          bkash_number_visit?: string
+          coupon_price_like?: number
+          coupon_price_panel?: number
+          coupon_price_visit?: number
+          id?: number
+          like_api_url?: string
+          logo_url?: string | null
+          payment_instructions?: string
+          rupantor_enabled?: boolean
+          updated_at?: string
+          visit_api_url?: string
+        }
+        Update: {
+          admin_telegram?: string
+          banner_api_url?: string
+          bkash_number?: string
+          bkash_number_guild?: string
+          bkash_number_visit?: string
+          coupon_price_like?: number
+          coupon_price_panel?: number
+          coupon_price_visit?: number
+          id?: number
+          like_api_url?: string
+          logo_url?: string | null
+          payment_instructions?: string
+          rupantor_enabled?: boolean
+          updated_at?: string
+          visit_api_url?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          sort_order: number
+          type: Database["public"]["Enums"]["package_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          type?: Database["public"]["Enums"]["package_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          type?: Database["public"]["Enums"]["package_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      coupon_orders: {
+        Row: {
+          approved_at: string | null
+          created_at: string
+          delivered_at: string | null
+          delivered_code: string | null
+          id: string
+          payment_screenshot_url: string | null
+          price_bdt: number
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["coupon_order_status"]
+          trx_id: string
+          type: Database["public"]["Enums"]["coupon_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivered_code?: string | null
+          id?: string
+          payment_screenshot_url?: string | null
+          price_bdt: number
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["coupon_order_status"]
+          trx_id: string
+          type: Database["public"]["Enums"]["coupon_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivered_code?: string | null
+          id?: string
+          payment_screenshot_url?: string | null
+          price_bdt?: number
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["coupon_order_status"]
+          trx_id?: string
+          type?: Database["public"]["Enums"]["coupon_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          assigned_at: string | null
+          assigned_order_id: string | null
+          code: string
+          created_at: string
+          id: string
+          is_used: boolean
+          type: Database["public"]["Enums"]["coupon_type"]
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_order_id?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          is_used?: boolean
+          type: Database["public"]["Enums"]["coupon_type"]
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_order_id?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          is_used?: boolean
+          type?: Database["public"]["Enums"]["coupon_type"]
+        }
+        Relationships: []
+      }
+      guild_orders: {
+        Row: {
+          admin_note: string | null
+          approved_at: string | null
+          created_at: string
+          expires_at: string | null
+          guild_id: string
+          guild_package_id: string
+          id: string
+          last_synced_at: string | null
+          last_synced_guild: Json | null
+          payment_screenshot_url: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["guild_order_status"]
+          trx_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          approved_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          guild_id: string
+          guild_package_id: string
+          id?: string
+          last_synced_at?: string | null
+          last_synced_guild?: Json | null
+          payment_screenshot_url?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["guild_order_status"]
+          trx_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          approved_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          guild_id?: string
+          guild_package_id?: string
+          id?: string
+          last_synced_at?: string | null
+          last_synced_guild?: Json | null
+          payment_screenshot_url?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["guild_order_status"]
+          trx_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_orders_guild_package_id_fkey"
+            columns: ["guild_package_id"]
+            isOneToOne: false
+            referencedRelation: "guild_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guild_packages: {
+        Row: {
+          bot_count: number
+          created_at: string
+          description: string | null
+          duration_label: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          price_bdt: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          bot_count?: number
+          created_at?: string
+          description?: string | null
+          duration_label?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          price_bdt: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          bot_count?: number
+          created_at?: string
+          description?: string | null
+          duration_label?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          price_bdt?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hero_slides: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          is_active: boolean
+          link_url: string | null
+          sort_order: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      like_logs: {
+        Row: {
+          api_response: Json | null
+          created_at: string
+          error_message: string | null
+          id: string
+          likes_sent: number
+          order_id: string
+          run_date: string
+          success: boolean
+        }
+        Insert: {
+          api_response?: Json | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          likes_sent?: number
+          order_id: string
+          run_date?: string
+          success?: boolean
+        }
+        Update: {
+          api_response?: Json | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          likes_sent?: number
+          order_id?: string
+          run_date?: string
+          success?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "like_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          admin_note: string | null
+          approved_at: string | null
+          created_at: string
+          days_completed: number
+          duration_days: number
+          ff_uid: string
+          id: string
+          likes_per_day: number
+          next_run_at: string | null
+          package_id: string
+          payment_provider: string | null
+          payment_ref: string | null
+          payment_screenshot_url: string | null
+          payment_url: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          total_likes_sent: number
+          trx_id: string
+          type: Database["public"]["Enums"]["package_type"]
+          updated_at: string
+          user_id: string
+          visits_delivered: number
+          visits_target: number
+        }
+        Insert: {
+          admin_note?: string | null
+          approved_at?: string | null
+          created_at?: string
+          days_completed?: number
+          duration_days?: number
+          ff_uid: string
+          id?: string
+          likes_per_day?: number
+          next_run_at?: string | null
+          package_id: string
+          payment_provider?: string | null
+          payment_ref?: string | null
+          payment_screenshot_url?: string | null
+          payment_url?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_likes_sent?: number
+          trx_id: string
+          type?: Database["public"]["Enums"]["package_type"]
+          updated_at?: string
+          user_id: string
+          visits_delivered?: number
+          visits_target?: number
+        }
+        Update: {
+          admin_note?: string | null
+          approved_at?: string | null
+          created_at?: string
+          days_completed?: number
+          duration_days?: number
+          ff_uid?: string
+          id?: string
+          likes_per_day?: number
+          next_run_at?: string | null
+          package_id?: string
+          payment_provider?: string | null
+          payment_ref?: string | null
+          payment_screenshot_url?: string | null
+          payment_url?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_likes_sent?: number
+          trx_id?: string
+          type?: Database["public"]["Enums"]["package_type"]
+          updated_at?: string
+          user_id?: string
+          visits_delivered?: number
+          visits_target?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packages: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          duration_days: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          likes_per_day: number
+          name: string
+          price_bdt: number
+          sort_order: number
+          type: Database["public"]["Enums"]["package_type"]
+          updated_at: string
+          visits_count: number
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          likes_per_day?: number
+          name: string
+          price_bdt: number
+          sort_order?: number
+          type?: Database["public"]["Enums"]["package_type"]
+          updated_at?: string
+          visits_count?: number
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          likes_per_day?: number
+          name?: string
+          price_bdt?: number
+          sort_order?: number
+          type?: Database["public"]["Enums"]["package_type"]
+          updated_at?: string
+          visits_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packages_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panel_categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      panel_keys: {
+        Row: {
+          assigned_at: string | null
+          assigned_order_id: string | null
+          created_at: string
+          id: string
+          is_used: boolean
+          key_value: string
+          panel_package_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_order_id?: string | null
+          created_at?: string
+          id?: string
+          is_used?: boolean
+          key_value: string
+          panel_package_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_order_id?: string | null
+          created_at?: string
+          id?: string
+          is_used?: boolean
+          key_value?: string
+          panel_package_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panel_keys_panel_package_id_fkey"
+            columns: ["panel_package_id"]
+            isOneToOne: false
+            referencedRelation: "panel_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panel_orders: {
+        Row: {
+          admin_note: string | null
+          apk_link: string | null
+          approved_at: string | null
+          created_at: string
+          delivered_at: string | null
+          delivered_key: string | null
+          id: string
+          panel_package_id: string
+          payment_screenshot_url: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["panel_order_status"]
+          trx_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          apk_link?: string | null
+          approved_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivered_key?: string | null
+          id?: string
+          panel_package_id: string
+          payment_screenshot_url?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["panel_order_status"]
+          trx_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          apk_link?: string | null
+          approved_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivered_key?: string | null
+          id?: string
+          panel_package_id?: string
+          payment_screenshot_url?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["panel_order_status"]
+          trx_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panel_orders_panel_package_id_fkey"
+            columns: ["panel_package_id"]
+            isOneToOne: false
+            referencedRelation: "panel_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      panel_packages: {
+        Row: {
+          apk_link: string | null
+          created_at: string
+          description: string | null
+          duration_label: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          panel_category_id: string | null
+          price_bdt: number
+          sort_order: number
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          apk_link?: string | null
+          created_at?: string
+          description?: string | null
+          duration_label?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          panel_category_id?: string | null
+          price_bdt: number
+          sort_order?: number
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          apk_link?: string | null
+          created_at?: string
+          description?: string | null
+          duration_label?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          panel_category_id?: string | null
+          price_bdt?: number
+          sort_order?: number
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "panel_packages_panel_category_id_fkey"
+            columns: ["panel_category_id"]
+            isOneToOne: false
+            referencedRelation: "panel_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      visit_logs: {
+        Row: {
+          api_response: Json | null
+          created_at: string
+          error_message: string | null
+          id: string
+          order_id: string
+          success: boolean
+          visits_sent: number
+        }
+        Insert: {
+          api_response?: Json | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          order_id: string
+          success?: boolean
+          visits_sent?: number
+        }
+        Update: {
+          api_response?: Json | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          order_id?: string
+          success?: boolean
+          visits_sent?: number
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      approve_coupon_order: {
+        Args: { _manual_code?: string; _order_id: string }
+        Returns: {
+          code_value: string
+          message: string
+          success: boolean
+        }[]
+      }
+      approve_panel_order: {
+        Args: { _manual_key?: string; _order_id: string }
+        Returns: {
+          key_value: string
+          message: string
+          success: boolean
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+    }
+    Enums: {
+      app_role: "admin" | "user"
+      coupon_order_status: "pending" | "delivered" | "rejected"
+      coupon_type: "like" | "visit" | "panel"
+      guild_order_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "running"
+        | "expired"
+      order_status: "pending" | "approved" | "rejected" | "completed"
+      package_type: "like" | "visit"
+      panel_order_status: "pending" | "approved" | "rejected" | "delivered"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      app_role: ["admin", "user"],
+      coupon_order_status: ["pending", "delivered", "rejected"],
+      coupon_type: ["like", "visit", "panel"],
+      guild_order_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "running",
+        "expired",
+      ],
+      order_status: ["pending", "approved", "rejected", "completed"],
+      package_type: ["like", "visit"],
+      panel_order_status: ["pending", "approved", "rejected", "delivered"],
+    },
+  },
+} as const
