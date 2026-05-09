@@ -46,6 +46,11 @@ export function AppShell({ children, admin = false }: { children: ReactNode; adm
             </div>
           </Link>
           <div className="flex items-center gap-2">
+            <a href={LEVEL_UP_WEB_URL} target="_blank" rel="noreferrer">
+              <Button size="sm" variant="default" className="h-8 gap-1 bg-gradient-primary text-primary-foreground">
+                <ExternalLink className="w-3.5 h-3.5" /> LEVEL UP WEB
+              </Button>
+            </a>
             <span className="hidden sm:block text-xs text-muted-foreground truncate max-w-[160px]">{user?.email}</span>
             <Button size="sm" variant="ghost" onClick={async () => { await signOut(); navigate({ to: "/" }); }}>
               <LogOut className="w-4 h-4" />
