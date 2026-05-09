@@ -95,6 +95,11 @@ function Landing() {
             <div className="font-display font-bold text-base sm:text-lg truncate">GS STORE</div>
           </Link>
           <div className="flex items-center gap-2">
+            <a href="https://gslevelup.lovable.app/" target="_blank" rel="noreferrer">
+              <Button size="sm" className="bg-gradient-primary text-primary-foreground h-9 px-3 rounded-lg">
+                <Sparkles className="w-3.5 h-3.5 mr-1" /> LEVEL UP WEB
+              </Button>
+            </a>
             <Link to="/auth">
               <Button size="icon" className="bg-gradient-primary text-primary-foreground h-9 w-9 rounded-lg">
                 <UserIcon className="w-4 h-4" />
