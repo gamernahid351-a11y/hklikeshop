@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
-import { getGuildInfo } from "@/server/guild.functions";
+import { getGuildInfo } from "@/lib/guild.functions";
 import gsLogo from "@/assets/gs-logo.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
