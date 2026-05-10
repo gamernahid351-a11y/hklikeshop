@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Flame, LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, FolderTree, Eye, UserCircle2, KeyRound, Image as ImageIcon, Ticket, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, FolderTree, Eye, UserCircle2, KeyRound, Image as ImageIcon, ExternalLink } from "lucide-react";
+import gsLogo from "@/assets/gs-logo.png";
 
 const LEVEL_UP_WEB_URL = "https://gslevelup.lovable.app/";
 import { useAuth } from "@/lib/auth";
@@ -24,7 +25,6 @@ export function AppShell({ children, admin = false }: { children: ReactNode; adm
     { to: "/admin/orders", label: "Likes", icon: Inbox },
     { to: "/admin/visit-orders", label: "Visits", icon: Eye },
     { to: "/admin/panels", label: "Panels", icon: KeyRound },
-    { to: "/admin/coupons", label: "Coupons", icon: Ticket },
     { to: "/admin/categories", label: "Categories", icon: FolderTree },
     { to: "/admin/packages", label: "Packages", icon: Pkg },
     { to: "/admin/settings", label: "Settings", icon: Settings },
@@ -37,9 +37,7 @@ export function AppShell({ children, admin = false }: { children: ReactNode; adm
       <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link to={admin ? "/admin" : "/dashboard"} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary grid place-items-center shadow-glow">
-              <Flame className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <img src={gsLogo} alt="GS STORE" className="w-8 h-8 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
             <div>
               <div className="font-display font-bold text-sm leading-none">GS STORE</div>
               {admin && <div className="text-[10px] text-accent leading-none mt-0.5 flex items-center gap-1"><ShieldCheck className="w-3 h-3"/>ADMIN</div>}
