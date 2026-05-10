@@ -35,8 +35,8 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "GS STORE — Free Fire Auto Like Service BD" },
       { name: "twitter:description", content: "Free Fire auto like service for Bangladesh server. Buy daily auto likes, 24h delivery via API." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/28ce76e9-4968-48f9-a048-5c81209409e3" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/28ce76e9-4968-48f9-a048-5c81209409e3" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b95bac55-8c10-470e-a2c1-c80c97be7dec" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b95bac55-8c10-470e-a2c1-c80c97be7dec" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
