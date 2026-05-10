@@ -12,6 +12,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Zap, Calendar, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Heart, Eye } from "lucide-react";
 import { toast } from "sonner";
 
+const DEFAULT_BANNER_API = "https://public-url-host--mehedixffx.replit.app/banner/profile?uid={uid}";
+
 type SearchT = { type?: "like" | "visit" };
 
 export const Route = createFileRoute("/_authenticated/dashboard/packages")({
@@ -52,6 +54,7 @@ function PackagesPage() {
   const [selected, setSelected] = useState<Pkg | null>(null);
   const [uid, setUid] = useState("");
   const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -80,9 +83,11 @@ function PackagesPage() {
     setTrxId("");
     setFile(null);
     setBannerLoaded(false);
+    setBannerError(false);
   }
 
-  const bannerUrl = uid && settings ? settings.banner_api_url.replace("{uid}", encodeURIComponent(uid)) : "";
+  const bannerTpl = settings?.banner_api_url?.trim() || DEFAULT_BANNER_API;
+  const bannerUrl = uid ? bannerTpl.replace("{uid}", encodeURIComponent(uid.trim())) : "";
 
   async function submit() {
     if (!user || !selected) return;
