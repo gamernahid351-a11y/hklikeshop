@@ -52,9 +52,9 @@ function AdminSettings() {
     try {
       const ext = file.name.split(".").pop() || "png";
       const path = `logo/${Date.now()}.${ext}`;
-      const { error } = await supabase.storage.from("package-images").upload(path, file, { contentType: file.type });
+      const { error } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type });
       if (error) throw error;
-      const { data } = supabase.storage.from("package-images").getPublicUrl(path);
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
       setS((prev) => prev ? { ...prev, logo_url: data.publicUrl } : prev);
       toast.success("Logo uploaded");
     } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
@@ -78,7 +78,7 @@ function AdminSettings() {
         </div>
         <div>
           <Label>Banner API URL <span className="text-xs text-muted-foreground">(use {"{uid}"} placeholder)</span></Label>
-          <Input value={s.banner_api_url} onChange={(e) => setS({ ...s, banner_api_url: e.target.value })} />
+          <Input value={s.banner_api_url} onChange={(e) => setS({ ...s, banner_api_url: e.target.value })} placeholder="https://public-url-host--mehedixffx.replit.app/banner/profile?uid={uid}" />
         </div>
         <div>
           <Label>Like API URL <span className="text-xs text-muted-foreground">(use {"{uid}"} placeholder)</span></Label>
@@ -90,7 +90,7 @@ function AdminSettings() {
         </div>
         <div>
           <Label>bKash Number (Likes)</Label>
-          <Input value={s.bkash_number} onChange={(e) => setS({ ...s, bkash_number: e.target.value })} />
+          <Input value={s.bkash_number} onChange={(e) => setS({ ...s, bkash_number: e.target.value })} placeholder="Admin bKash number" />
         </div>
         <div>
           <Label>bKash Number (Visits)</Label>
