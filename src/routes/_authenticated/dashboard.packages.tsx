@@ -12,6 +12,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Zap, Calendar, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Heart, Eye } from "lucide-react";
 import { toast } from "sonner";
 
+const DEFAULT_BANNER_API = "https://public-url-host--mehedixffx.replit.app/banner/profile?uid={uid}";
+
 type SearchT = { type?: "like" | "visit" };
 
 export const Route = createFileRoute("/_authenticated/dashboard/packages")({
@@ -52,6 +54,7 @@ function PackagesPage() {
   const [selected, setSelected] = useState<Pkg | null>(null);
   const [uid, setUid] = useState("");
   const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -80,9 +83,11 @@ function PackagesPage() {
     setTrxId("");
     setFile(null);
     setBannerLoaded(false);
+    setBannerError(false);
   }
 
-  const bannerUrl = uid && settings ? settings.banner_api_url.replace("{uid}", encodeURIComponent(uid)) : "";
+  const bannerTpl = settings?.banner_api_url?.trim() || DEFAULT_BANNER_API;
+  const bannerUrl = uid ? bannerTpl.replace("{uid}", encodeURIComponent(uid.trim())) : "";
 
   async function submit() {
     if (!user || !selected) return;
@@ -183,44 +188,49 @@ function PackagesPage() {
           <div className="space-y-4">
             <div>
               <Label>Free Fire UID</Label>
-              <Input value={uid} onChange={(e) => { setUid(e.target.value); setBannerLoaded(false); }} placeholder="Enter your FF UID" inputMode="numeric" />
+              <Input value={uid} onChange={(e) => { setUid(e.target.value); setBannerLoaded(false); setBannerError(false); }} placeholder="Enter your FF UID" inputMode="numeric" />
             </div>
 
             {uid && /^\d{6,}$/.test(uid) && bannerUrl && (
-              <div className="relative">
-                {!bannerLoaded && (
-                  <div className="h-10 grid place-items-center text-xs text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Loading profile…
+              <div className="relative overflow-hidden rounded-lg border border-border bg-background">
+                {!bannerLoaded && !bannerError && (
+                  <div className="h-24 grid place-items-center text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading banner…</div>
+                  </div>
+                )}
+                {bannerError && (
+                  <div className="h-24 grid place-items-center px-4 text-center text-xs text-warning">
+                    Banner load hoyni. UID check korun, tarpor abar try korun.
                   </div>
                 )}
                 <img
+                  key={bannerUrl}
                   src={bannerUrl}
-                  alt="FF profile"
+                  alt="Free Fire profile banner"
                   onLoad={() => setBannerLoaded(true)}
-                  onError={() => setBannerLoaded(true)}
-                  className={`block w-full h-auto rounded-lg ${bannerLoaded ? "" : "hidden"}`}
+                  onError={() => { setBannerLoaded(true); setBannerError(true); }}
+                  className={`block w-full h-auto ${bannerLoaded && !bannerError ? "" : "hidden"}`}
                 />
               </div>
             )}
 
             {settings && bkashNumber && (
-              <div className="rounded-2xl p-4 space-y-3 border border-pink-300/50 dark:border-pink-400/30 shadow-lg"
-                   style={{ background: "linear-gradient(135deg, #ec4899 0%, #d946ef 50%, #a21caf 100%)" }}>
-                <div className="flex items-center gap-2 text-white">
-                  <div className="w-8 h-8 rounded-lg bg-white/20 grid place-items-center backdrop-blur">
-                    <Smartphone className="w-4 h-4 text-white" />
+              <div className="rounded-xl p-4 space-y-3 border border-warning/40 bg-gradient-payment shadow-payment">
+                <div className="flex items-center gap-2 text-warning-foreground">
+                  <div className="w-8 h-8 rounded-lg bg-background/20 grid place-items-center backdrop-blur">
+                    <Smartphone className="w-4 h-4 text-warning-foreground" />
                   </div>
                   <div className="text-sm font-bold">bKash Payment</div>
-                  <Badge className="ml-auto bg-white text-pink-700 border-0 font-bold hover:bg-white">৳{Number(selected?.price_bdt)}</Badge>
+                  <Badge className="ml-auto bg-background/85 text-foreground border-0 font-bold hover:bg-background/85">৳{Number(selected?.price_bdt)}</Badge>
                 </div>
 
-                <div className="rounded-xl bg-white/15 backdrop-blur border border-white/30 p-3">
-                  <div className="text-[10px] uppercase tracking-widest text-white/80 mb-1">Send Money to</div>
+                <div className="rounded-lg bg-background/20 backdrop-blur border border-background/30 p-3">
+                  <div className="text-[10px] uppercase tracking-widest text-warning-foreground/80 mb-1">Send Money to</div>
                   <div className="flex items-center justify-between gap-2">
-                    <div className="font-mono font-bold text-2xl text-white tracking-wider drop-shadow">{bkashNumber}</div>
+                    <div className="font-mono font-bold text-xl sm:text-2xl text-warning-foreground tracking-wider drop-shadow break-all">{bkashNumber}</div>
                     <Button
                       size="sm"
-                      className={copied ? "bg-white text-pink-700 hover:bg-white" : "bg-white text-pink-700 hover:bg-white/90 font-bold"}
+                      className={copied ? "bg-background text-foreground hover:bg-background" : "bg-background text-foreground hover:bg-background/90 font-bold"}
                       onClick={() => {
                         navigator.clipboard.writeText(bkashNumber);
                         setCopied(true);
@@ -232,17 +242,17 @@ function PackagesPage() {
                   </div>
                 </div>
 
-                <ol className="space-y-2 text-xs text-white">
+                <ol className="space-y-2 text-xs text-warning-foreground">
                   <li className="flex gap-2 items-start">
-                    <span className="w-5 h-5 shrink-0 rounded-full bg-white text-pink-700 grid place-items-center font-bold text-[10px]">1</span>
+                    <span className="w-5 h-5 shrink-0 rounded-full bg-background text-foreground grid place-items-center font-bold text-[10px]">1</span>
                     <span>bKash app khulun → <b>Send Money</b> select korun</span>
                   </li>
                   <li className="flex gap-2 items-start">
-                    <span className="w-5 h-5 shrink-0 rounded-full bg-white text-pink-700 grid place-items-center font-bold text-[10px]">2</span>
+                    <span className="w-5 h-5 shrink-0 rounded-full bg-background text-foreground grid place-items-center font-bold text-[10px]">2</span>
                     <span>Upore deya number e <b>৳{Number(selected?.price_bdt)}</b> send korun</span>
                   </li>
                   <li className="flex gap-2 items-start">
-                    <span className="w-5 h-5 shrink-0 rounded-full bg-white text-pink-700 grid place-items-center font-bold text-[10px]">3</span>
+                    <span className="w-5 h-5 shrink-0 rounded-full bg-background text-foreground grid place-items-center font-bold text-[10px]">3</span>
                     <span>Confirmation SMS theke <b>TrxID</b> niche bosan + <b>screenshot</b> upload korun</span>
                   </li>
                   <li className="flex gap-2 items-start">
@@ -252,11 +262,11 @@ function PackagesPage() {
                 </ol>
 
                 {settings.payment_instructions && (
-                  <details className="text-xs text-white/95">
+                  <details className="text-xs text-warning-foreground/95">
                     <summary className="cursor-pointer flex items-center gap-1 opacity-90">
                       <AlertCircle className="w-3 h-3" /> More details
                     </summary>
-                    <pre className="whitespace-pre-wrap mt-2 font-sans bg-white/10 p-2 rounded border border-white/20">{settings.payment_instructions.replace("{bkash}", bkashNumber)}</pre>
+                    <pre className="whitespace-pre-wrap mt-2 font-sans bg-background/20 p-2 rounded border border-background/25">{settings.payment_instructions.replace("{bkash}", bkashNumber)}</pre>
                   </details>
                 )}
               </div>

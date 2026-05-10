@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Flame, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import gsLogo from "@/assets/gs-logo.png";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Login • GS STORE" }] }),
@@ -57,9 +58,7 @@ function AuthPage() {
     <div className="min-h-screen bg-gradient-hero flex flex-col">
       <header className="px-5 py-4 max-w-6xl w-full mx-auto">
         <Link to="/" className="flex items-center gap-2 w-fit">
-          <div className="w-9 h-9 rounded-lg bg-gradient-primary grid place-items-center shadow-glow">
-            <Flame className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img src={gsLogo} alt="GS STORE" className="w-9 h-9 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
           <span className="font-display font-bold text-lg">GS STORE</span>
         </Link>
       </header>

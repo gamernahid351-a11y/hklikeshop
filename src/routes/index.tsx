@@ -9,7 +9,7 @@ import {
   ShieldCheck, Rocket, Headphones, Heart, Eye, KeyRound,
   Volume2, VolumeX, ChevronLeft, ChevronRight, BadgeCheck, Tag, Sparkles, Users,
 } from "lucide-react";
-import gsLogo from "@/assets/gs-logo.jpg";
+import gsLogo from "@/assets/gs-logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
