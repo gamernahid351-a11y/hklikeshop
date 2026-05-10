@@ -1,11 +1,11 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, FolderTree, Eye, UserCircle2, KeyRound, Image as ImageIcon, ExternalLink } from "lucide-react";
 import gsLogo from "@/assets/gs-logo.png";
-
-const LEVEL_UP_WEB_URL = "https://gslevelup.lovable.app/";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import type { ReactNode } from "react";
+
+const LEVEL_UP_WEB_URL = "https://gslevelup.lovable.app/";
 
 export function AppShell({ children, admin = false }: { children: ReactNode; admin?: boolean }) {
   const { signOut, user } = useAuth();
