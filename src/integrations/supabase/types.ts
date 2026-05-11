@@ -25,6 +25,7 @@ export type Database = {
           coupon_price_panel: number
           coupon_price_visit: number
           id: number
+          level_up_web_url: string
           like_api_url: string
           logo_url: string | null
           payment_instructions: string
@@ -42,6 +43,7 @@ export type Database = {
           coupon_price_panel?: number
           coupon_price_visit?: number
           id?: number
+          level_up_web_url?: string
           like_api_url?: string
           logo_url?: string | null
           payment_instructions?: string
@@ -59,6 +61,7 @@ export type Database = {
           coupon_price_panel?: number
           coupon_price_visit?: number
           id?: number
+          level_up_web_url?: string
           like_api_url?: string
           logo_url?: string | null
           payment_instructions?: string
@@ -366,8 +369,11 @@ export type Database = {
           approved_at: string | null
           created_at: string
           days_completed: number
+          delivered_at: string | null
+          delivered_password: string | null
+          delivered_username: string | null
           duration_days: number
-          ff_uid: string
+          ff_uid: string | null
           id: string
           likes_per_day: number
           next_run_at: string | null
@@ -391,8 +397,11 @@ export type Database = {
           approved_at?: string | null
           created_at?: string
           days_completed?: number
+          delivered_at?: string | null
+          delivered_password?: string | null
+          delivered_username?: string | null
           duration_days?: number
-          ff_uid: string
+          ff_uid?: string | null
           id?: string
           likes_per_day?: number
           next_run_at?: string | null
@@ -416,8 +425,11 @@ export type Database = {
           approved_at?: string | null
           created_at?: string
           days_completed?: number
+          delivered_at?: string | null
+          delivered_password?: string | null
+          delivered_username?: string | null
           duration_days?: number
-          ff_uid?: string
+          ff_uid?: string | null
           id?: string
           likes_per_day?: number
           next_run_at?: string | null
@@ -803,7 +815,7 @@ export type Database = {
         | "running"
         | "expired"
       order_status: "pending" | "approved" | "rejected" | "completed"
-      package_type: "like" | "visit"
+      package_type: "like" | "visit" | "levelup"
       panel_order_status: "pending" | "approved" | "rejected" | "delivered"
     }
     CompositeTypes: {
@@ -943,7 +955,7 @@ export const Constants = {
         "expired",
       ],
       order_status: ["pending", "approved", "rejected", "completed"],
-      package_type: ["like", "visit"],
+      package_type: ["like", "visit", "levelup"],
       panel_order_status: ["pending", "approved", "rejected", "delivered"],
     },
   },

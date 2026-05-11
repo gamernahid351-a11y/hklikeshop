@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Zap, Clock, CheckCircle2, XCircle, Hourglass, Eye, Heart, KeyRound, Copy, Check, Download } from "lucide-react";
+import { Calendar, Zap, Clock, CheckCircle2, XCircle, Hourglass, Eye, Heart, KeyRound, Copy, Check, Download, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -15,9 +15,9 @@ export const Route = createFileRoute("/_authenticated/dashboard/orders")({
 
 type Order = {
   id: string;
-  ff_uid: string;
+  ff_uid: string | null;
   status: "pending" | "approved" | "rejected" | "completed";
-  type: "like" | "visit";
+  type: "like" | "visit" | "levelup";
   likes_per_day: number;
   duration_days: number;
   days_completed: number;
@@ -28,6 +28,9 @@ type Order = {
   approved_at: string | null;
   created_at: string;
   rejection_reason: string | null;
+  delivered_username: string | null;
+  delivered_password: string | null;
+  delivered_at: string | null;
   packages: { name: string; price_bdt: number } | null;
 };
 type Log = { id: string; order_id: string; run_date?: string; likes_sent?: number; visits_sent?: number; success: boolean; error_message: string | null; created_at: string };
@@ -93,7 +96,7 @@ function OrdersPage() {
       const { data: settings } = await supabase.from("app_settings").select("banner_api_url").eq("id", 1).single();
       const { data } = await supabase
         .from("orders")
-        .select("id,ff_uid,status,type,likes_per_day,duration_days,days_completed,total_likes_sent,visits_target,visits_delivered,next_run_at,approved_at,created_at,rejection_reason,packages(name,price_bdt)")
+        .select("id,ff_uid,status,type,likes_per_day,duration_days,days_completed,total_likes_sent,visits_target,visits_delivered,next_run_at,approved_at,created_at,rejection_reason,delivered_username,delivered_password,delivered_at,packages(name,price_bdt)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -194,30 +197,55 @@ function OrdersPage() {
             <Card className="bg-gradient-card border-border p-8 text-center text-muted-foreground">No orders here.</Card>
           )}
           {filtered.map((o) => {
-            const showBanner = (o.status === "approved" || o.status === "pending") && bannerUrl;
             const isVisit = o.type === "visit";
+            const isLevelUp = o.type === "levelup";
+            const showBanner = !isLevelUp && (o.status === "approved" || o.status === "pending") && bannerUrl && o.ff_uid;
             const logs = isVisit ? (visitLogs[o.id] || []) : (likeLogs[o.id] || []);
             return (
               <Card key={o.id} className="bg-gradient-card border-border overflow-hidden shadow-card">
                 <div className="p-4 flex items-center justify-between border-b border-border gap-2">
                   <div className="min-w-0">
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      {isVisit ? <Eye className="w-3 h-3 text-accent"/> : <Heart className="w-3 h-3 text-primary"/>}
-                      {o.packages?.name || (isVisit ? "Visit Package" : "Like Package")} • UID
+                      {isLevelUp ? <Crown className="w-3 h-3 text-primary"/> : isVisit ? <Eye className="w-3 h-3 text-accent"/> : <Heart className="w-3 h-3 text-primary"/>}
+                      {o.packages?.name || (isLevelUp ? "LEVEL UP BOT" : isVisit ? "Visit Package" : "Like Package")}{o.ff_uid ? " • UID" : ""}
                     </div>
-                    <div className="font-mono font-bold text-base truncate">{o.ff_uid}</div>
+                    <div className="font-mono font-bold text-base truncate">{o.ff_uid ?? (isLevelUp ? "Account Delivery" : "—")}</div>
                   </div>
                   {statusBadge(o.status)}
                 </div>
 
-                {showBanner && (
+                {showBanner && o.ff_uid && (
                   <div className="bg-background border-b border-border">
                     <img src={bannerUrl!.replace("{uid}", encodeURIComponent(o.ff_uid))} alt="FF profile" className="w-full max-h-[200px] object-contain" onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
                   </div>
                 )}
 
+                {isLevelUp && o.delivered_username && o.delivered_password && (
+                  <div className="p-4 space-y-2 border-b border-border bg-success/5">
+                    <div className="text-xs font-bold text-success flex items-center gap-1.5"><Crown className="w-3.5 h-3.5"/>LEVEL UP Account Delivered</div>
+                    <div>
+                      <div className="text-[10px] text-muted-foreground">Username</div>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 font-mono text-sm bg-background border border-border rounded px-2 py-1.5">{o.delivered_username}</code>
+                        <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(o.delivered_username!); toast.success("Copied"); }}><Copy className="w-3.5 h-3.5"/></Button>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-muted-foreground">Password</div>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 font-mono text-sm bg-background border border-border rounded px-2 py-1.5">{o.delivered_password}</code>
+                        <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(o.delivered_password!); toast.success("Copied"); }}><Copy className="w-3.5 h-3.5"/></Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {isLevelUp && !o.delivered_username && o.status === "pending" && (
+                  <div className="p-4 text-xs text-muted-foreground">Admin verify korle username + password ekhane delivery hobe.</div>
+                )}
+
                 {/* Stats */}
-                {isVisit ? (
+                {!isLevelUp && (isVisit ? (
                   <div className="p-4 grid grid-cols-3 gap-2">
                     <div className="bg-background/60 rounded-lg p-2.5 text-center">
                       <div className="text-[10px] text-muted-foreground">Target</div>
@@ -247,7 +275,7 @@ function OrdersPage() {
                       <div className="font-bold text-success">{o.total_likes_sent}</div>
                     </div>
                   </div>
-                )}
+                ))}
 
                 {!isVisit && o.status === "approved" && o.next_run_at && (
                   <div className="px-4 pb-3 flex items-center justify-between">

@@ -9,16 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, Calendar, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Heart, Eye } from "lucide-react";
+import { Zap, Calendar, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Heart, Eye, Crown } from "lucide-react";
 import { toast } from "sonner";
 
 const DEFAULT_BANNER_API = "https://public-url-host--mehedixffx.replit.app/banner/profile?uid={uid}";
 
-type SearchT = { type?: "like" | "visit" };
+type SearchT = { type?: "like" | "visit" | "levelup" };
 
 export const Route = createFileRoute("/_authenticated/dashboard/packages")({
   validateSearch: (s: Record<string, unknown>): SearchT => ({
-    type: s.type === "visit" || s.type === "like" ? s.type : undefined,
+    type: s.type === "visit" || s.type === "like" || s.type === "levelup" ? s.type : undefined,
   }),
   component: PackagesPage,
 });
@@ -31,7 +31,7 @@ type Pkg = {
   duration_days: number;
   visits_count: number;
   price_bdt: number;
-  type: "like" | "visit";
+  type: "like" | "visit" | "levelup";
   image_url: string | null;
   sort_order: number;
 };
@@ -50,7 +50,7 @@ function PackagesPage() {
   const search = useSearch({ from: "/_authenticated/dashboard/packages" });
   const [pkgs, setPkgs] = useState<Pkg[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [tab, setTab] = useState<"like" | "visit">(search.type ?? "like");
+  const [tab, setTab] = useState<"like" | "visit" | "levelup">(search.type ?? "like");
   const [selected, setSelected] = useState<Pkg | null>(null);
   const [uid, setUid] = useState("");
   const [bannerLoaded, setBannerLoaded] = useState(false);
@@ -75,7 +75,10 @@ function PackagesPage() {
 
   const filtered = useMemo(() => pkgs.filter((p) => p.type === tab), [pkgs, tab]);
   const isVisit = selected?.type === "visit";
-  const bkashNumber = isVisit ? settings?.bkash_number_visit || settings?.bkash_number : settings?.bkash_number;
+  const isLevelUp = selected?.type === "levelup";
+  const bkashNumber = isVisit
+    ? settings?.bkash_number_visit || settings?.bkash_number
+    : settings?.bkash_number;
 
   function open(p: Pkg) {
     setSelected(p);
@@ -91,7 +94,7 @@ function PackagesPage() {
 
   async function submit() {
     if (!user || !selected) return;
-    if (!/^\d{6,}$/.test(uid)) return toast.error("Valid Free Fire UID din");
+    if (selected.type !== "levelup" && !/^\d{6,}$/.test(uid)) return toast.error("Valid Free Fire UID din");
     if (!trxId.trim()) return toast.error("TrxID din");
     if (!file) return toast.error("Payment screenshot upload korun");
     setBusy(true);
@@ -103,7 +106,7 @@ function PackagesPage() {
       const { error: insErr } = await supabase.from("orders").insert({
         user_id: user.id,
         package_id: selected.id,
-        ff_uid: uid.trim(),
+        ff_uid: selected.type === "levelup" ? null : uid.trim(),
         trx_id: trxId.trim(),
         payment_screenshot_url: path,
         likes_per_day: selected.likes_per_day,
@@ -129,10 +132,11 @@ function PackagesPage() {
         <p className="text-sm text-muted-foreground">BD server only</p>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as "like" | "visit")}>
-        <TabsList className="grid grid-cols-2 w-full">
-          <TabsTrigger value="like" className="gap-1.5"><Heart className="w-4 h-4" /> Auto Likes</TabsTrigger>
+      <Tabs value={tab} onValueChange={(v) => setTab(v as "like" | "visit" | "levelup")}>
+        <TabsList className="grid grid-cols-3 w-full">
+          <TabsTrigger value="like" className="gap-1.5"><Heart className="w-4 h-4" /> Likes</TabsTrigger>
           <TabsTrigger value="visit" className="gap-1.5"><Eye className="w-4 h-4" /> Visits</TabsTrigger>
+          <TabsTrigger value="levelup" className="gap-1.5"><Crown className="w-4 h-4" /> LEVEL UP BOT</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -153,13 +157,20 @@ function PackagesPage() {
                 <Badge className="bg-primary/15 text-primary border-0">৳{Number(p.price_bdt)}</Badge>
               </div>
               <div className="flex flex-wrap gap-3 my-3 text-sm">
-                {p.type === "like" ? (
+                {p.type === "like" && (
                   <>
                     <div className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-primary"/>{p.likes_per_day}/day</div>
                     <div className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-accent"/>{p.duration_days} days</div>
                   </>
-                ) : (
+                )}
+                {p.type === "visit" && (
                   <div className="flex items-center gap-1.5"><Eye className="w-4 h-4 text-accent"/>{p.visits_count.toLocaleString()} visits</div>
+                )}
+                {p.type === "levelup" && (
+                  <>
+                    <div className="flex items-center gap-1.5"><Crown className="w-4 h-4 text-primary"/>Username + Password</div>
+                    {p.duration_days > 0 && <div className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-accent"/>{p.duration_days} days</div>}
+                  </>
                 )}
               </div>
               <Button onClick={() => open(p)} className="w-full bg-gradient-primary text-primary-foreground hover:opacity-90 font-semibold mt-auto">Buy now</Button>
@@ -175,42 +186,54 @@ function PackagesPage() {
         <DialogContent className="bg-card border-border max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display flex items-center gap-2">
-              {isVisit ? <Eye className="w-4 h-4 text-accent" /> : <Heart className="w-4 h-4 text-primary" />}
+              {isLevelUp ? <Crown className="w-4 h-4 text-primary" /> : isVisit ? <Eye className="w-4 h-4 text-accent" /> : <Heart className="w-4 h-4 text-primary" />}
               {selected?.name}
             </DialogTitle>
             <DialogDescription>
               {selected?.type === "like"
                 ? `${selected?.likes_per_day} likes/day × ${selected?.duration_days} days = ৳${Number(selected?.price_bdt)}`
-                : `${selected?.visits_count.toLocaleString()} visits = ৳${Number(selected?.price_bdt)}`}
+                : selected?.type === "visit"
+                  ? `${selected?.visits_count.toLocaleString()} visits = ৳${Number(selected?.price_bdt)}`
+                  : `Username + Password delivery${selected?.duration_days ? ` (${selected.duration_days} days)` : ""} = ৳${Number(selected?.price_bdt)}`}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div>
-              <Label>Free Fire UID</Label>
-              <Input value={uid} onChange={(e) => { setUid(e.target.value); setBannerLoaded(false); setBannerError(false); }} placeholder="Enter your FF UID" inputMode="numeric" />
-            </div>
+            {!isLevelUp && (
+              <>
+                <div>
+                  <Label>Free Fire UID</Label>
+                  <Input value={uid} onChange={(e) => { setUid(e.target.value); setBannerLoaded(false); setBannerError(false); }} placeholder="Enter your FF UID" inputMode="numeric" />
+                </div>
 
-            {uid && /^\d{6,}$/.test(uid) && bannerUrl && (
-              <div className="relative overflow-hidden rounded-lg border border-border bg-background">
-                {!bannerLoaded && !bannerError && (
-                  <div className="h-24 grid place-items-center text-xs text-muted-foreground">
-                    <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading banner…</div>
+                {uid && /^\d{6,}$/.test(uid) && bannerUrl && (
+                  <div className="relative overflow-hidden rounded-lg border border-border bg-background">
+                    {!bannerLoaded && !bannerError && (
+                      <div className="h-24 grid place-items-center text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading banner…</div>
+                      </div>
+                    )}
+                    {bannerError && (
+                      <div className="h-24 grid place-items-center px-4 text-center text-xs text-warning">
+                        Banner load hoyni. UID check korun, tarpor abar try korun.
+                      </div>
+                    )}
+                    <img
+                      key={bannerUrl}
+                      src={bannerUrl}
+                      alt="Free Fire profile banner"
+                      onLoad={() => setBannerLoaded(true)}
+                      onError={() => { setBannerLoaded(true); setBannerError(true); }}
+                      className={`block w-full h-auto ${bannerLoaded && !bannerError ? "" : "hidden"}`}
+                    />
                   </div>
                 )}
-                {bannerError && (
-                  <div className="h-24 grid place-items-center px-4 text-center text-xs text-warning">
-                    Banner load hoyni. UID check korun, tarpor abar try korun.
-                  </div>
-                )}
-                <img
-                  key={bannerUrl}
-                  src={bannerUrl}
-                  alt="Free Fire profile banner"
-                  onLoad={() => setBannerLoaded(true)}
-                  onError={() => { setBannerLoaded(true); setBannerError(true); }}
-                  className={`block w-full h-auto ${bannerLoaded && !bannerError ? "" : "hidden"}`}
-                />
+              </>
+            )}
+
+            {isLevelUp && (
+              <div className="rounded-md bg-primary/10 border border-primary/30 p-3 text-xs text-primary">
+                Payment confirm hole admin apnar <b>username & password</b> deliver korbe — "My Orders" page e dekhte parben.
               </div>
             )}
 

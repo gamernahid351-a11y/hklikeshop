@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
-import gsLogo from "@/assets/gs-logo.jpg";
+import gsLogo from "@/assets/gs-shop-logo.png";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
@@ -118,6 +118,12 @@ function GuildPage() {
       </div>
 
       {/* Active instances */}
+      {orders.filter((o) => o.status === "approved" || o.status === "running").length > 0 && (
+        <div className="flex items-center gap-2 text-primary">
+          <Rocket className="w-4 h-4" />
+          <h2 className="font-display font-bold text-base">Bot Instances</h2>
+        </div>
+      )}
       {orders.filter((o) => o.status === "approved" || o.status === "running").map((o) => (
         <BotInstanceCard key={o.id} order={o} />
       ))}
@@ -222,8 +228,11 @@ function BotInstanceCard({ order }: { order: GOrder }) {
   return (
     <Card className="bg-gradient-card border-primary/40 p-4 space-y-3 shadow-glow">
       <div className="flex items-center gap-3">
-        <div className="w-16 h-16 rounded-xl overflow-hidden ring-2 ring-primary/40 bg-secondary grid place-items-center shrink-0">
-          <img src={gsLogo} alt="" className="w-full h-full object-cover" />
+        <div className="relative w-16 h-16 shrink-0">
+          <div className="w-16 h-16 rounded-xl overflow-hidden ring-2 ring-primary/40 bg-secondary">
+            <img src={gsLogo} alt="GS STORE" className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded bg-primary text-[8px] font-bold text-primary-foreground tracking-wider">GS STORE</div>
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
