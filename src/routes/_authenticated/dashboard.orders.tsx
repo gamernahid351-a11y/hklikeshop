@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Calendar, Zap, Clock, CheckCircle2, XCircle, Hourglass, Eye, Heart, KeyRound, Copy, Check, Download } from "lucide-react";
+import { Calendar, Zap, Clock, CheckCircle2, XCircle, Hourglass, Eye, Heart, KeyRound, Copy, Check, Download, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -15,9 +15,9 @@ export const Route = createFileRoute("/_authenticated/dashboard/orders")({
 
 type Order = {
   id: string;
-  ff_uid: string;
+  ff_uid: string | null;
   status: "pending" | "approved" | "rejected" | "completed";
-  type: "like" | "visit";
+  type: "like" | "visit" | "levelup";
   likes_per_day: number;
   duration_days: number;
   days_completed: number;
@@ -28,6 +28,9 @@ type Order = {
   approved_at: string | null;
   created_at: string;
   rejection_reason: string | null;
+  delivered_username: string | null;
+  delivered_password: string | null;
+  delivered_at: string | null;
   packages: { name: string; price_bdt: number } | null;
 };
 type Log = { id: string; order_id: string; run_date?: string; likes_sent?: number; visits_sent?: number; success: boolean; error_message: string | null; created_at: string };
@@ -93,7 +96,7 @@ function OrdersPage() {
       const { data: settings } = await supabase.from("app_settings").select("banner_api_url").eq("id", 1).single();
       const { data } = await supabase
         .from("orders")
-        .select("id,ff_uid,status,type,likes_per_day,duration_days,days_completed,total_likes_sent,visits_target,visits_delivered,next_run_at,approved_at,created_at,rejection_reason,packages(name,price_bdt)")
+        .select("id,ff_uid,status,type,likes_per_day,duration_days,days_completed,total_likes_sent,visits_target,visits_delivered,next_run_at,approved_at,created_at,rejection_reason,delivered_username,delivered_password,delivered_at,packages(name,price_bdt)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
