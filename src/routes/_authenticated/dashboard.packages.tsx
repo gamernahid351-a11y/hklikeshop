@@ -75,7 +75,10 @@ function PackagesPage() {
 
   const filtered = useMemo(() => pkgs.filter((p) => p.type === tab), [pkgs, tab]);
   const isVisit = selected?.type === "visit";
-  const bkashNumber = isVisit ? settings?.bkash_number_visit || settings?.bkash_number : settings?.bkash_number;
+  const isLevelUp = selected?.type === "levelup";
+  const bkashNumber = isVisit
+    ? settings?.bkash_number_visit || settings?.bkash_number
+    : settings?.bkash_number;
 
   function open(p: Pkg) {
     setSelected(p);
@@ -91,7 +94,7 @@ function PackagesPage() {
 
   async function submit() {
     if (!user || !selected) return;
-    if (!/^\d{6,}$/.test(uid)) return toast.error("Valid Free Fire UID din");
+    if (selected.type !== "levelup" && !/^\d{6,}$/.test(uid)) return toast.error("Valid Free Fire UID din");
     if (!trxId.trim()) return toast.error("TrxID din");
     if (!file) return toast.error("Payment screenshot upload korun");
     setBusy(true);
@@ -103,7 +106,7 @@ function PackagesPage() {
       const { error: insErr } = await supabase.from("orders").insert({
         user_id: user.id,
         package_id: selected.id,
-        ff_uid: uid.trim(),
+        ff_uid: selected.type === "levelup" ? null : uid.trim(),
         trx_id: trxId.trim(),
         payment_screenshot_url: path,
         likes_per_day: selected.likes_per_day,
@@ -129,10 +132,11 @@ function PackagesPage() {
         <p className="text-sm text-muted-foreground">BD server only</p>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as "like" | "visit")}>
-        <TabsList className="grid grid-cols-2 w-full">
-          <TabsTrigger value="like" className="gap-1.5"><Heart className="w-4 h-4" /> Auto Likes</TabsTrigger>
+      <Tabs value={tab} onValueChange={(v) => setTab(v as "like" | "visit" | "levelup")}>
+        <TabsList className="grid grid-cols-3 w-full">
+          <TabsTrigger value="like" className="gap-1.5"><Heart className="w-4 h-4" /> Likes</TabsTrigger>
           <TabsTrigger value="visit" className="gap-1.5"><Eye className="w-4 h-4" /> Visits</TabsTrigger>
+          <TabsTrigger value="levelup" className="gap-1.5"><Crown className="w-4 h-4" /> LEVEL UP BOT</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -153,13 +157,20 @@ function PackagesPage() {
                 <Badge className="bg-primary/15 text-primary border-0">৳{Number(p.price_bdt)}</Badge>
               </div>
               <div className="flex flex-wrap gap-3 my-3 text-sm">
-                {p.type === "like" ? (
+                {p.type === "like" && (
                   <>
                     <div className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-primary"/>{p.likes_per_day}/day</div>
                     <div className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-accent"/>{p.duration_days} days</div>
                   </>
-                ) : (
+                )}
+                {p.type === "visit" && (
                   <div className="flex items-center gap-1.5"><Eye className="w-4 h-4 text-accent"/>{p.visits_count.toLocaleString()} visits</div>
+                )}
+                {p.type === "levelup" && (
+                  <>
+                    <div className="flex items-center gap-1.5"><Crown className="w-4 h-4 text-primary"/>Username + Password</div>
+                    {p.duration_days > 0 && <div className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-accent"/>{p.duration_days} days</div>}
+                  </>
                 )}
               </div>
               <Button onClick={() => open(p)} className="w-full bg-gradient-primary text-primary-foreground hover:opacity-90 font-semibold mt-auto">Buy now</Button>
