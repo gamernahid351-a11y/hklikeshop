@@ -9,16 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, Calendar, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Heart, Eye } from "lucide-react";
+import { Zap, Calendar, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Heart, Eye, Crown } from "lucide-react";
 import { toast } from "sonner";
 
 const DEFAULT_BANNER_API = "https://public-url-host--mehedixffx.replit.app/banner/profile?uid={uid}";
 
-type SearchT = { type?: "like" | "visit" };
+type SearchT = { type?: "like" | "visit" | "levelup" };
 
 export const Route = createFileRoute("/_authenticated/dashboard/packages")({
   validateSearch: (s: Record<string, unknown>): SearchT => ({
-    type: s.type === "visit" || s.type === "like" ? s.type : undefined,
+    type: s.type === "visit" || s.type === "like" || s.type === "levelup" ? s.type : undefined,
   }),
   component: PackagesPage,
 });
@@ -31,7 +31,7 @@ type Pkg = {
   duration_days: number;
   visits_count: number;
   price_bdt: number;
-  type: "like" | "visit";
+  type: "like" | "visit" | "levelup";
   image_url: string | null;
   sort_order: number;
 };
@@ -50,7 +50,7 @@ function PackagesPage() {
   const search = useSearch({ from: "/_authenticated/dashboard/packages" });
   const [pkgs, setPkgs] = useState<Pkg[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [tab, setTab] = useState<"like" | "visit">(search.type ?? "like");
+  const [tab, setTab] = useState<"like" | "visit" | "levelup">(search.type ?? "like");
   const [selected, setSelected] = useState<Pkg | null>(null);
   const [uid, setUid] = useState("");
   const [bannerLoaded, setBannerLoaded] = useState(false);
