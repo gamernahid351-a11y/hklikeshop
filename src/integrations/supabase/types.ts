@@ -803,7 +803,7 @@ export type Database = {
         | "running"
         | "expired"
       order_status: "pending" | "approved" | "rejected" | "completed"
-      package_type: "like" | "visit"
+      package_type: "like" | "visit" | "levelup"
       panel_order_status: "pending" | "approved" | "rejected" | "delivered"
     }
     CompositeTypes: {
@@ -943,7 +943,7 @@ export const Constants = {
         "expired",
       ],
       order_status: ["pending", "approved", "rejected", "completed"],
-      package_type: ["like", "visit"],
+      package_type: ["like", "visit", "levelup"],
       panel_order_status: ["pending", "approved", "rejected", "delivered"],
     },
   },
