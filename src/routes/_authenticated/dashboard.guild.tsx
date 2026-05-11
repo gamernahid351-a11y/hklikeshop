@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
-import gsLogo from "@/assets/gs-logo.jpg";
+import gsLogo from "@/assets/gs-shop-logo.png";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
