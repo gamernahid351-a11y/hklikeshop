@@ -235,6 +235,31 @@ function AdminOrders() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!deliver} onOpenChange={(o) => !o && setDeliver(null)}>
+        <DialogContent className="bg-card border-border">
+          <DialogHeader><DialogTitle>Deliver LEVEL UP BOT credentials</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="text-xs text-muted-foreground">
+              Order #{deliver?.id.slice(0,8)} • {deliver?.user_email}
+            </div>
+            <div>
+              <Label>Username</Label>
+              <Input value={delivU} onChange={(e) => setDelivU(e.target.value)} placeholder="e.g. user_42" />
+            </div>
+            <div>
+              <Label>Password</Label>
+              <Input value={delivP} onChange={(e) => setDelivP(e.target.value)} placeholder="Account password" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeliver(null)}>Cancel</Button>
+            <Button disabled={busyId === deliver?.id} onClick={doDeliver} className="bg-success text-success-foreground">
+              {busyId === deliver?.id ? <Loader2 className="w-4 h-4 animate-spin"/> : <><Send className="w-4 h-4 mr-1"/>Deliver</>}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
