@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, CheckCircle2, XCircle, Loader2, Image as ImageIcon, Heart } from "lucide-react";
+import { Eye, CheckCircle2, XCircle, Loader2, Image as ImageIcon, Heart, Crown, Send } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/orders")({
@@ -18,11 +18,14 @@ export const Route = createFileRoute("/_authenticated/admin/orders")({
 type Order = {
   id: string;
   user_id: string;
-  ff_uid: string;
+  ff_uid: string | null;
   trx_id: string;
   payment_screenshot_url: string | null;
   status: "pending" | "approved" | "rejected" | "completed";
-  type: "like" | "visit";
+  type: "like" | "visit" | "levelup";
+  delivered_username: string | null;
+  delivered_password: string | null;
+  delivered_at: string | null;
   likes_per_day: number;
   duration_days: number;
   days_completed: number;
@@ -38,18 +41,22 @@ function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"pending" | "approved" | "rejected" | "completed" | "all">("pending");
+  const [kind, setKind] = useState<"like" | "levelup">("like");
   const [view, setView] = useState<Order | null>(null);
   const [shotUrl, setShotUrl] = useState<string | null>(null);
   const [reject, setReject] = useState<Order | null>(null);
   const [reason, setReason] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [deliver, setDeliver] = useState<Order | null>(null);
+  const [delivU, setDelivU] = useState("");
+  const [delivP, setDelivP] = useState("");
 
   async function load() {
     setLoading(true);
     const { data } = await supabase
       .from("orders")
       .select("*, packages(name,price_bdt)")
-      .eq("type", "like")
+      .eq("type", kind)
       .order("created_at", { ascending: false });
     const list = (data ?? []) as unknown as Order[];
     if (list.length) {
@@ -62,7 +69,7 @@ function AdminOrders() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [kind]);
 
   async function openShot(o: Order) {
     setView(o);
