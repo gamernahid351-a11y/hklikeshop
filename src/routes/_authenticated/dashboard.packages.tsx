@@ -186,42 +186,54 @@ function PackagesPage() {
         <DialogContent className="bg-card border-border max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display flex items-center gap-2">
-              {isVisit ? <Eye className="w-4 h-4 text-accent" /> : <Heart className="w-4 h-4 text-primary" />}
+              {isLevelUp ? <Crown className="w-4 h-4 text-primary" /> : isVisit ? <Eye className="w-4 h-4 text-accent" /> : <Heart className="w-4 h-4 text-primary" />}
               {selected?.name}
             </DialogTitle>
             <DialogDescription>
               {selected?.type === "like"
                 ? `${selected?.likes_per_day} likes/day × ${selected?.duration_days} days = ৳${Number(selected?.price_bdt)}`
-                : `${selected?.visits_count.toLocaleString()} visits = ৳${Number(selected?.price_bdt)}`}
+                : selected?.type === "visit"
+                  ? `${selected?.visits_count.toLocaleString()} visits = ৳${Number(selected?.price_bdt)}`
+                  : `Username + Password delivery${selected?.duration_days ? ` (${selected.duration_days} days)` : ""} = ৳${Number(selected?.price_bdt)}`}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div>
-              <Label>Free Fire UID</Label>
-              <Input value={uid} onChange={(e) => { setUid(e.target.value); setBannerLoaded(false); setBannerError(false); }} placeholder="Enter your FF UID" inputMode="numeric" />
-            </div>
+            {!isLevelUp && (
+              <>
+                <div>
+                  <Label>Free Fire UID</Label>
+                  <Input value={uid} onChange={(e) => { setUid(e.target.value); setBannerLoaded(false); setBannerError(false); }} placeholder="Enter your FF UID" inputMode="numeric" />
+                </div>
 
-            {uid && /^\d{6,}$/.test(uid) && bannerUrl && (
-              <div className="relative overflow-hidden rounded-lg border border-border bg-background">
-                {!bannerLoaded && !bannerError && (
-                  <div className="h-24 grid place-items-center text-xs text-muted-foreground">
-                    <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading banner…</div>
+                {uid && /^\d{6,}$/.test(uid) && bannerUrl && (
+                  <div className="relative overflow-hidden rounded-lg border border-border bg-background">
+                    {!bannerLoaded && !bannerError && (
+                      <div className="h-24 grid place-items-center text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading banner…</div>
+                      </div>
+                    )}
+                    {bannerError && (
+                      <div className="h-24 grid place-items-center px-4 text-center text-xs text-warning">
+                        Banner load hoyni. UID check korun, tarpor abar try korun.
+                      </div>
+                    )}
+                    <img
+                      key={bannerUrl}
+                      src={bannerUrl}
+                      alt="Free Fire profile banner"
+                      onLoad={() => setBannerLoaded(true)}
+                      onError={() => { setBannerLoaded(true); setBannerError(true); }}
+                      className={`block w-full h-auto ${bannerLoaded && !bannerError ? "" : "hidden"}`}
+                    />
                   </div>
                 )}
-                {bannerError && (
-                  <div className="h-24 grid place-items-center px-4 text-center text-xs text-warning">
-                    Banner load hoyni. UID check korun, tarpor abar try korun.
-                  </div>
-                )}
-                <img
-                  key={bannerUrl}
-                  src={bannerUrl}
-                  alt="Free Fire profile banner"
-                  onLoad={() => setBannerLoaded(true)}
-                  onError={() => { setBannerLoaded(true); setBannerError(true); }}
-                  className={`block w-full h-auto ${bannerLoaded && !bannerError ? "" : "hidden"}`}
-                />
+              </>
+            )}
+
+            {isLevelUp && (
+              <div className="rounded-md bg-primary/10 border border-primary/30 p-3 text-xs text-primary">
+                Payment confirm hole admin apnar <b>username & password</b> deliver korbe — "My Orders" page e dekhte parben.
               </div>
             )}
 
