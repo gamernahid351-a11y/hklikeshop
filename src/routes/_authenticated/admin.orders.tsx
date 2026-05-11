@@ -99,6 +99,25 @@ function AdminOrders() {
     }
   }
 
+  async function doDeliver() {
+    if (!deliver) return;
+    if (!delivU.trim() || !delivP.trim()) return toast.error("Username & Password din");
+    setBusyId(deliver.id);
+    try {
+      const { error } = await supabase.from("orders").update({
+        status: "completed",
+        approved_at: new Date().toISOString(),
+        delivered_username: delivU.trim(),
+        delivered_password: delivP.trim(),
+        delivered_at: new Date().toISOString(),
+      }).eq("id", deliver.id);
+      if (error) throw error;
+      toast.success("Delivered!");
+      setDeliver(null); setDelivU(""); setDelivP("");
+      await load();
+    } catch (e: any) { toast.error(e.message); } finally { setBusyId(null); }
+  }
+
   async function doReject() {
     if (!reject) return;
     setBusyId(reject.id);
@@ -121,9 +140,16 @@ function AdminOrders() {
   return (
     <div className="space-y-5 max-w-4xl mx-auto">
       <div className="flex items-center gap-2">
-        <Heart className="w-5 h-5 text-primary" />
-        <h1 className="font-display font-bold text-2xl">Like Orders</h1>
+        {kind === "levelup" ? <Crown className="w-5 h-5 text-primary" /> : <Heart className="w-5 h-5 text-primary" />}
+        <h1 className="font-display font-bold text-2xl">{kind === "levelup" ? "LEVEL UP BOT Orders" : "Like Orders"}</h1>
       </div>
+
+      <Tabs value={kind} onValueChange={(v) => setKind(v as any)}>
+        <TabsList className="grid grid-cols-2 w-full">
+          <TabsTrigger value="like" className="gap-1.5"><Heart className="w-4 h-4"/>Likes</TabsTrigger>
+          <TabsTrigger value="levelup" className="gap-1.5"><Crown className="w-4 h-4"/>LEVEL UP BOT</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
         <TabsList className="grid grid-cols-5 w-full">
@@ -142,7 +168,7 @@ function AdminOrders() {
             <Card key={o.id} className="bg-gradient-card border-border p-4 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="font-mono font-bold">{o.ff_uid}</div>
+                  <div className="font-mono font-bold">{o.ff_uid ?? (kind === "levelup" ? "—" : "?")}</div>
                   <div className="text-xs text-muted-foreground truncate">{o.user_email ?? "—"}</div>
                 </div>
                 <Badge variant="outline" className="capitalize">{o.status}</Badge>
@@ -150,16 +176,23 @@ function AdminOrders() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div><span className="text-muted-foreground">Pack:</span> {o.packages?.name} (৳{o.packages ? Number(o.packages.price_bdt) : "?"})</div>
                 <div><span className="text-muted-foreground">TrxID:</span> <span className="font-mono">{o.trx_id}</span></div>
-                <div><span className="text-muted-foreground">Plan:</span> {o.likes_per_day}/day × {o.duration_days}d</div>
-                <div><span className="text-muted-foreground">Sent:</span> {o.total_likes_sent} likes ({o.days_completed}/{o.duration_days})</div>
+                {kind === "like" && <div><span className="text-muted-foreground">Plan:</span> {o.likes_per_day}/day × {o.duration_days}d</div>}
+                {kind === "like" && <div><span className="text-muted-foreground">Sent:</span> {o.total_likes_sent} likes ({o.days_completed}/{o.duration_days})</div>}
+                {kind === "levelup" && o.delivered_username && <div className="col-span-2"><span className="text-muted-foreground">Username:</span> <span className="font-mono">{o.delivered_username}</span></div>}
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" onClick={() => openShot(o)}><Eye className="w-3.5 h-3.5 mr-1"/>View proof</Button>
                 {o.status === "pending" && (
                   <>
-                    <Button size="sm" disabled={busyId === o.id} onClick={() => approve(o)} className="bg-success text-success-foreground hover:bg-success/90">
-                      {busyId === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin"/> : <><CheckCircle2 className="w-3.5 h-3.5 mr-1"/>Approve</>}
-                    </Button>
+                    {kind === "levelup" ? (
+                      <Button size="sm" onClick={() => { setDeliver(o); setDelivU(""); setDelivP(""); }} className="bg-success text-success-foreground hover:bg-success/90">
+                        <Send className="w-3.5 h-3.5 mr-1"/>Deliver creds
+                      </Button>
+                    ) : (
+                      <Button size="sm" disabled={busyId === o.id} onClick={() => approve(o)} className="bg-success text-success-foreground hover:bg-success/90">
+                        {busyId === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin"/> : <><CheckCircle2 className="w-3.5 h-3.5 mr-1"/>Approve</>}
+                      </Button>
+                    )}
                     <Button size="sm" variant="destructive" onClick={() => setReject(o)}><XCircle className="w-3.5 h-3.5 mr-1"/>Reject</Button>
                   </>
                 )}
