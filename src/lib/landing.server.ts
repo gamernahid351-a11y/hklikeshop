@@ -27,7 +27,7 @@ export async function fetchLandingData() {
         .order("sort_order"),
       supabaseAdmin
         .from("app_settings")
-        .select("logo_url")
+        .select("logo_url, level_up_web_url")
         .eq("id", 1)
         .maybeSingle(),
       supabaseAdmin
@@ -54,5 +54,6 @@ export async function fetchLandingData() {
     guildPackages: guildPkgs ?? [],
     panelCategories: panelCats ?? [],
     logoUrl: (settings?.logo_url as string | null) ?? null,
+    levelUpWebUrl: ((settings as any)?.level_up_web_url as string | null) ?? "https://gslevelup.lovable.app/",
   };
 }

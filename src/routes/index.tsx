@@ -9,7 +9,7 @@ import {
   ShieldCheck, Rocket, Headphones, Heart, Eye, KeyRound,
   Volume2, VolumeX, ChevronLeft, ChevronRight, BadgeCheck, Tag, Sparkles, Users,
 } from "lucide-react";
-import gsLogo from "@/assets/gs-logo.png";
+import gsLogo from "@/assets/gs-shop-logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -53,6 +53,7 @@ function Landing() {
   const [panels, setPanels] = useState<Panel[]>([]);
   const [adminSlides, setAdminSlides] = useState<Slide[]>([]);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [levelUpUrl, setLevelUpUrl] = useState("https://gslevelup.lovable.app/");
   const [guildPkgs, setGuildPkgs] = useState<GuildPkg[]>([]);
   const [panelCats, setPanelCats] = useState<PanelCat[]>([]);
 
@@ -69,6 +70,7 @@ function Landing() {
       setPanels(data.panels as Panel[]);
       setAdminSlides(((data as any).slides ?? []) as Slide[]);
       setLogoUrl(((data as any).logoUrl ?? null) as string | null);
+      if ((data as any).levelUpWebUrl) setLevelUpUrl((data as any).levelUpWebUrl);
       setGuildPkgs(((data as any).guildPackages ?? []) as GuildPkg[]);
       setPanelCats(((data as any).panelCategories ?? []) as PanelCat[]);
     })();
@@ -95,7 +97,7 @@ function Landing() {
             <div className="font-display font-bold text-base sm:text-lg truncate">GS STORE</div>
           </Link>
           <div className="flex items-center gap-2">
-            <a href="https://gslevelup.lovable.app/" target="_blank" rel="noreferrer">
+            <a href={levelUpUrl} target="_blank" rel="noreferrer">
               <Button size="sm" className="bg-gradient-primary text-primary-foreground h-9 px-3 rounded-lg">
                 <Sparkles className="w-3.5 h-3.5 mr-1" /> LEVEL UP WEB
               </Button>
