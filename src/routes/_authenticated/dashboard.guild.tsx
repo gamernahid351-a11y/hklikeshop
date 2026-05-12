@@ -53,9 +53,14 @@ function GuildPage() {
   }
   useEffect(() => { load(); }, [user]);
 
-  // Auto-refresh guild info for approved/running orders
+  // Auto-refresh guild info every 5 minutes for active instances (within 8h window)
   useEffect(() => {
-    const live = orders.filter((o) => o.status === "approved" || o.status === "running");
+    const EIGHT_H = 8 * 60 * 60 * 1000;
+    const live = orders.filter((o) => {
+      if (o.status !== "approved" && o.status !== "running") return false;
+      const age = Date.now() - new Date(o.created_at).getTime();
+      return age < EIGHT_H;
+    });
     if (live.length === 0) return;
     let cancelled = false;
     async function tick() {
@@ -69,7 +74,7 @@ function GuildPage() {
       if (!cancelled) load();
     }
     tick();
-    const t = setInterval(tick, 60000);
+    const t = setInterval(tick, 5 * 60 * 1000); // 5 minutes
     return () => { cancelled = true; clearInterval(t); };
   }, [orders.map((o) => o.id + o.status).join(",")]);
 
