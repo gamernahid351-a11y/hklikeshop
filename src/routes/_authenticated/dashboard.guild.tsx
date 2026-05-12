@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw } from "lucide-react";
+import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
 import gsLogo from "@/assets/gs-shop-logo.png";
+import lionLogo from "@/assets/guild-lion.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
@@ -73,6 +74,7 @@ function GuildPage() {
   }, [orders.map((o) => o.id + o.status).join(",")]);
 
   const pkg = pkgs.find((p) => p.id === selectedPkg);
+  const liveOrders = orders.filter((o) => o.status === "approved" || o.status === "running");
 
   async function preCheck() {
     if (!guildId.trim()) return toast.error("Guild ID din");
@@ -116,17 +118,6 @@ function GuildPage() {
         <Users className="w-5 h-5 text-primary" />
         <h1 className="font-display font-bold text-2xl">Guild Bots</h1>
       </div>
-
-      {/* Active instances */}
-      {orders.filter((o) => o.status === "approved" || o.status === "running").length > 0 && (
-        <div className="flex items-center gap-2 text-primary">
-          <Rocket className="w-4 h-4" />
-          <h2 className="font-display font-bold text-base">Bot Instances</h2>
-        </div>
-      )}
-      {orders.filter((o) => o.status === "approved" || o.status === "running").map((o) => (
-        <BotInstanceCard key={o.id} order={o} />
-      ))}
 
       {/* Order form */}
       <Card className="bg-gradient-card border-border p-4 space-y-3">
@@ -203,6 +194,17 @@ function GuildPage() {
           </Card>
         ))}
       </div>
+
+      {/* Active instances - below orders */}
+      {liveOrders.length > 0 && (
+        <>
+          <div className="flex items-center gap-2 text-primary pt-2">
+            <Activity className="w-5 h-5" />
+            <h2 className="font-display font-bold text-lg">Bot Instances</h2>
+          </div>
+          {liveOrders.map((o) => <BotInstanceCard key={o.id} order={o} />)}
+        </>
+      )}
     </div>
   );
 }
@@ -222,60 +224,110 @@ function BotInstanceCard({ order }: { order: GOrder }) {
   }
   const startMs = new Date(order.created_at).getTime();
   const uptimeMs = Date.now() - startMs;
-  const h = Math.floor(uptimeMs / 3600000); const m = Math.floor((uptimeMs % 3600000) / 60000);
+  const h = Math.floor(uptimeMs / 3600000);
+  const m = Math.floor((uptimeMs % 3600000) / 60000);
   const goalPct = g?.WeeklyActivityPoints ? Math.min(100, Math.round((g.WeeklyActivityPoints / 1000000) * 100)) : 0;
+  const botCount = order.guild_packages?.bot_count ?? 1;
+  const createdDate = new Date(order.created_at).toLocaleDateString("en-GB");
 
   return (
-    <Card className="bg-gradient-card border-primary/40 p-4 space-y-3 shadow-glow">
-      <div className="flex items-center gap-3">
-        <div className="relative w-16 h-16 shrink-0">
-          <div className="w-16 h-16 rounded-xl overflow-hidden ring-2 ring-primary/40 bg-secondary">
+    <div className="space-y-3">
+      {/* PART 1: Guild Info from API */}
+      <Card className="bg-gradient-card border-2 border-primary/60 p-4 shadow-glow">
+        <div className="flex items-start gap-3">
+          <div className="relative w-20 h-20 shrink-0">
+            <div className="w-20 h-20 rounded-xl overflow-hidden ring-2 ring-primary/60 bg-secondary">
+              <img src={lionLogo} alt="Guild" className="w-full h-full object-cover" />
+            </div>
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-primary text-[9px] font-bold text-primary-foreground tracking-wider whitespace-nowrap">
+              LV.{g?.GuildLevel ?? "?"}
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <div className="font-display font-bold text-lg truncate">{g?.GuildName ?? "Loading…"}</div>
+            </div>
+            <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
+              <span>ID: {order.guild_id}</span>
+              <span>|</span>
+              <span>🇧🇩 BD</span>
+              <span>|</span>
+              <span className="text-primary font-bold">{botCount} BOTS</span>
+            </div>
+            {g?.GuildSlogan && <div className="text-xs italic text-warning mt-1 truncate">"{g.GuildSlogan}"</div>}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-border/60">
+          <div className="text-center">
+            <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Users className="w-3 h-3" />MEMBERS</div>
+            <div className="font-bold text-base mt-1">{g?.CurrentMembers ?? "—"}<span className="text-muted-foreground text-xs">/{g?.MaxMembers ?? "—"}</span></div>
+          </div>
+          <div className="text-center">
+            <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Crown className="w-3 h-3" />LEADER</div>
+            <div className="font-bold text-sm mt-1 truncate" title={g?.GuildLeader?.Name}>{g?.GuildLeader?.Name ?? "—"}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Star className="w-3 h-3" />TOTAL GLORY</div>
+            <div className="font-bold text-base mt-1 text-warning">{(g?.TotalActivityPoints ?? 0).toLocaleString()}</div>
+          </div>
+        </div>
+      </Card>
+
+      {/* PART 2: GS STORE Bot Instance */}
+      <Card className="bg-gradient-card border-border p-4 space-y-3">
+        <div className="flex items-start gap-3">
+          <div className="w-14 h-14 rounded-xl overflow-hidden ring-2 ring-primary/40 bg-secondary shrink-0">
             <img src={gsLogo} alt="GS STORE" className="w-full h-full object-cover" />
           </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded bg-primary text-[8px] font-bold text-primary-foreground tracking-wider">GS STORE</div>
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-            <div className="font-display font-bold text-base truncate">{g?.GuildName ?? "Loading…"}</div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <div className="font-display font-bold text-base">GS <span className="text-primary italic">STORE</span></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+            </div>
+            <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+              <Users className="w-3 h-3" /> {g?.GuildName ?? order.guild_id} • Lv{g?.GuildLevel ?? "?"} • <Globe className="w-3 h-3" /> 🇧🇩 BD
+            </div>
           </div>
-          <div className="text-[11px] text-muted-foreground">ID: {order.guild_id} • 🇧🇩 BD • {order.guild_packages?.bot_count ?? 1} BOTS</div>
-          {g?.GuildSlogan && <div className="text-[11px] italic text-muted-foreground truncate">"{g.GuildSlogan}"</div>}
+          <Badge className="bg-success/20 text-success border-success/40 hover:bg-success/30">● RUNNING</Badge>
         </div>
-        <Badge className="bg-success/20 text-success border-success/40">● RUNNING</Badge>
-      </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-md bg-background/50 p-2">
-          <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Users className="w-3 h-3" />MEMBERS</div>
-          <div className="font-bold text-sm">{g?.CurrentMembers ?? "—"}<span className="text-muted-foreground">/{g?.MaxMembers ?? "—"}</span></div>
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1.5 text-primary font-bold">
+            <Zap className="w-4 h-4" /> {botCount} bots
+          </div>
+          <div className="text-xs text-muted-foreground">Basic • 2L+ Glory</div>
         </div>
-        <div className="rounded-md bg-background/50 p-2">
-          <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Crown className="w-3 h-3" />LEADER</div>
-          <div className="font-bold text-sm truncate" title={g?.GuildLeader?.Name}>{g?.GuildLeader?.Name ?? "—"}</div>
-        </div>
-        <div className="rounded-md bg-background/50 p-2">
-          <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Star className="w-3 h-3" />GLORY</div>
-          <div className="font-bold text-sm text-primary">{(g?.TotalActivityPoints ?? 0).toLocaleString()}</div>
-        </div>
-      </div>
 
-      <div>
-        <div className="flex justify-between text-[10px] mb-1">
-          <span className="text-muted-foreground">WEEKLY</span>
-          <span className="text-primary font-bold">{goalPct}%</span>
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Clock className="w-4 h-4" /> Uptime <span className="text-foreground font-bold">{h}h {m}m</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Star className="w-4 h-4 text-warning" /> Glory <span className="text-warning font-bold">{(g?.TotalActivityPoints ?? 0).toLocaleString()}</span>
+          </div>
         </div>
-        <div className="h-1.5 bg-background/60 rounded-full overflow-hidden"><div className="h-full bg-gradient-primary" style={{ width: `${goalPct}%` }} /></div>
-      </div>
 
-      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-        <span>Uptime: <span className="text-foreground font-bold">{h}h {m}m</span></span>
-        <span>Powered by GS STORE</span>
-      </div>
+        <div>
+          <div className="flex justify-between text-[10px] mb-1">
+            <span className="text-muted-foreground tracking-wider">8H GOAL</span>
+            <span className="text-primary font-bold">{goalPct}%</span>
+          </div>
+          <div className="h-1.5 bg-background/60 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-primary transition-all" style={{ width: `${goalPct}%` }} />
+          </div>
+        </div>
 
-      <Button onClick={refresh} disabled={refreshing} variant="outline" size="sm" className="w-full">
-        {refreshing ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <RefreshCcw className="w-3.5 h-3.5 mr-1" />} Refresh Instance
-      </Button>
-    </Card>
+        <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+          <span>Created: {createdDate}</span>
+          <span>🇧🇩 Bangladesh</span>
+        </div>
+
+        <Button onClick={refresh} disabled={refreshing} variant="outline" size="sm" className="w-full border-primary/40 text-primary hover:bg-primary/10">
+          {refreshing ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <RefreshCcw className="w-3.5 h-3.5 mr-1" />} Restart Instance
+        </Button>
+      </Card>
+    </div>
   );
 }
