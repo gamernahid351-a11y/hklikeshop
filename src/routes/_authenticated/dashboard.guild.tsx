@@ -325,12 +325,13 @@ function BotInstanceCard({ order }: { order: GOrder }) {
 
         <div>
           <div className="flex justify-between text-[10px] mb-1">
-            <span className="text-muted-foreground tracking-wider">8H GOAL</span>
+            <span className="text-muted-foreground tracking-wider">8H GOAL {expired ? "DONE" : `· ${rh}h ${rm}m left`}</span>
             <span className="text-primary font-bold">{goalPct}%</span>
           </div>
           <div className="h-1.5 bg-background/60 rounded-full overflow-hidden">
             <div className="h-full bg-gradient-primary transition-all" style={{ width: `${goalPct}%` }} />
           </div>
+          <div className="text-[10px] text-muted-foreground mt-1">Auto-update every 5 min from API</div>
         </div>
 
         <div className="flex items-center justify-between text-[11px] text-muted-foreground">
