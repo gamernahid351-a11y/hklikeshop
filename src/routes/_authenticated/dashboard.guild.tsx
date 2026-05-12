@@ -227,11 +227,16 @@ function BotInstanceCard({ order }: { order: GOrder }) {
       } else toast.error("Guild not found");
     } finally { setRefreshing(false); }
   }
+  const EIGHT_H_MS = 8 * 60 * 60 * 1000;
   const startMs = new Date(order.created_at).getTime();
-  const uptimeMs = Date.now() - startMs;
+  const uptimeMs = Math.min(Date.now() - startMs, EIGHT_H_MS);
+  const remainMs = Math.max(0, EIGHT_H_MS - (Date.now() - startMs));
+  const expired = remainMs === 0;
   const h = Math.floor(uptimeMs / 3600000);
   const m = Math.floor((uptimeMs % 3600000) / 60000);
-  const goalPct = g?.WeeklyActivityPoints ? Math.min(100, Math.round((g.WeeklyActivityPoints / 1000000) * 100)) : 0;
+  const rh = Math.floor(remainMs / 3600000);
+  const rm = Math.floor((remainMs % 3600000) / 60000);
+  const goalPct = Math.min(100, Math.round((uptimeMs / EIGHT_H_MS) * 100));
   const botCount = order.guild_packages?.bot_count ?? 1;
   const createdDate = new Date(order.created_at).toLocaleDateString("en-GB");
 
