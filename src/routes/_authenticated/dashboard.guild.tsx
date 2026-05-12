@@ -53,9 +53,14 @@ function GuildPage() {
   }
   useEffect(() => { load(); }, [user]);
 
-  // Auto-refresh guild info for approved/running orders
+  // Auto-refresh guild info every 5 minutes for active instances (within 8h window)
   useEffect(() => {
-    const live = orders.filter((o) => o.status === "approved" || o.status === "running");
+    const EIGHT_H = 8 * 60 * 60 * 1000;
+    const live = orders.filter((o) => {
+      if (o.status !== "approved" && o.status !== "running") return false;
+      const age = Date.now() - new Date(o.created_at).getTime();
+      return age < EIGHT_H;
+    });
     if (live.length === 0) return;
     let cancelled = false;
     async function tick() {
@@ -69,7 +74,7 @@ function GuildPage() {
       if (!cancelled) load();
     }
     tick();
-    const t = setInterval(tick, 60000);
+    const t = setInterval(tick, 5 * 60 * 1000); // 5 minutes
     return () => { cancelled = true; clearInterval(t); };
   }, [orders.map((o) => o.id + o.status).join(",")]);
 
@@ -222,11 +227,16 @@ function BotInstanceCard({ order }: { order: GOrder }) {
       } else toast.error("Guild not found");
     } finally { setRefreshing(false); }
   }
+  const EIGHT_H_MS = 8 * 60 * 60 * 1000;
   const startMs = new Date(order.created_at).getTime();
-  const uptimeMs = Date.now() - startMs;
+  const uptimeMs = Math.min(Date.now() - startMs, EIGHT_H_MS);
+  const remainMs = Math.max(0, EIGHT_H_MS - (Date.now() - startMs));
+  const expired = remainMs === 0;
   const h = Math.floor(uptimeMs / 3600000);
   const m = Math.floor((uptimeMs % 3600000) / 60000);
-  const goalPct = g?.WeeklyActivityPoints ? Math.min(100, Math.round((g.WeeklyActivityPoints / 1000000) * 100)) : 0;
+  const rh = Math.floor(remainMs / 3600000);
+  const rm = Math.floor((remainMs % 3600000) / 60000);
+  const goalPct = Math.min(100, Math.round((uptimeMs / EIGHT_H_MS) * 100));
   const botCount = order.guild_packages?.bot_count ?? 1;
   const createdDate = new Date(order.created_at).toLocaleDateString("en-GB");
 
@@ -290,7 +300,11 @@ function BotInstanceCard({ order }: { order: GOrder }) {
               <Users className="w-3 h-3" /> {g?.GuildName ?? order.guild_id} • Lv{g?.GuildLevel ?? "?"} • <Globe className="w-3 h-3" /> 🇧🇩 BD
             </div>
           </div>
-          <Badge className="bg-success/20 text-success border-success/40 hover:bg-success/30">● RUNNING</Badge>
+          {expired ? (
+            <Badge className="bg-muted text-muted-foreground border-border">● COMPLETED</Badge>
+          ) : (
+            <Badge className="bg-success/20 text-success border-success/40 hover:bg-success/30">● RUNNING</Badge>
+          )}
         </div>
 
         <div className="flex items-center justify-between text-sm">
@@ -311,12 +325,13 @@ function BotInstanceCard({ order }: { order: GOrder }) {
 
         <div>
           <div className="flex justify-between text-[10px] mb-1">
-            <span className="text-muted-foreground tracking-wider">8H GOAL</span>
+            <span className="text-muted-foreground tracking-wider">8H GOAL {expired ? "DONE" : `· ${rh}h ${rm}m left`}</span>
             <span className="text-primary font-bold">{goalPct}%</span>
           </div>
           <div className="h-1.5 bg-background/60 rounded-full overflow-hidden">
             <div className="h-full bg-gradient-primary transition-all" style={{ width: `${goalPct}%` }} />
           </div>
+          <div className="text-[10px] text-muted-foreground mt-1">Auto-update every 5 min from API</div>
         </div>
 
         <div className="flex items-center justify-between text-[11px] text-muted-foreground">
