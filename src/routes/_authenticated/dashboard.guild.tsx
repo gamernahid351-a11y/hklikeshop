@@ -300,7 +300,11 @@ function BotInstanceCard({ order }: { order: GOrder }) {
               <Users className="w-3 h-3" /> {g?.GuildName ?? order.guild_id} • Lv{g?.GuildLevel ?? "?"} • <Globe className="w-3 h-3" /> 🇧🇩 BD
             </div>
           </div>
-          <Badge className="bg-success/20 text-success border-success/40 hover:bg-success/30">● RUNNING</Badge>
+          {expired ? (
+            <Badge className="bg-muted text-muted-foreground border-border">● COMPLETED</Badge>
+          ) : (
+            <Badge className="bg-success/20 text-success border-success/40 hover:bg-success/30">● RUNNING</Badge>
+          )}
         </div>
 
         <div className="flex items-center justify-between text-sm">
