@@ -1,0 +1,1 @@
+create policy "guild_orders_user_delete" on public.guild_orders for delete using (auth.uid() = user_id);

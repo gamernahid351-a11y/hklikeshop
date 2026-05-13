@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe } from "lucide-react";
+import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
 import gsLogo from "@/assets/gs-shop-logo.png";
@@ -347,9 +347,24 @@ function BotInstanceCard({ order }: { order: GOrder }) {
           <span>🇧🇩 Bangladesh</span>
         </div>
 
-        <Button onClick={refresh} disabled={refreshing} variant="outline" size="sm" className="w-full border-primary/40 text-primary hover:bg-primary/10">
-          {refreshing ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <RefreshCcw className="w-3.5 h-3.5 mr-1" />} Restart Instance
-        </Button>
+        {expired ? (
+          <Button
+            onClick={async () => {
+              if (!confirm("8 hour complete. Delete this instance?")) return;
+              const { error } = await supabase.from("guild_orders").delete().eq("id", order.id);
+              if (error) toast.error(error.message); else { toast.success("Instance deleted"); window.location.reload(); }
+            }}
+            variant="outline"
+            size="sm"
+            className="w-full border-destructive/50 text-destructive hover:bg-destructive/10"
+          >
+            <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete Instance
+          </Button>
+        ) : (
+          <Button onClick={refresh} disabled={refreshing} variant="outline" size="sm" className="w-full border-primary/40 text-primary hover:bg-primary/10">
+            {refreshing ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <RefreshCcw className="w-3.5 h-3.5 mr-1" />} Restart Instance
+          </Button>
+        )}
       </Card>
     </div>
   );
