@@ -11,7 +11,7 @@ import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, A
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
 import gsLogo from "@/assets/gs-shop-logo.png";
-import lionLogo from "@/assets/guild-lion.jpg";
+import lionLogo from "@/assets/guild-lion.png";
 import instanceBg from "@/assets/instance-bg.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
@@ -244,26 +244,26 @@ function BotInstanceCard({ order }: { order: GOrder }) {
   return (
     <div className="space-y-3">
       {/* PART 1: Guild Info from API */}
-      <Card className="bg-gradient-card border-2 border-primary/60 p-4 shadow-glow">
+      <Card className="bg-card/80 border-2 border-warning/60 p-4 rounded-2xl">
         <div className="flex items-start gap-3">
           <div className="relative w-20 h-20 shrink-0">
-            <div className="w-20 h-20 rounded-xl overflow-hidden ring-2 ring-primary/60 bg-secondary">
+            <div className="w-20 h-20 rounded-xl overflow-hidden ring-2 ring-warning/60 bg-secondary">
               <img src={lionLogo} alt="Guild" className="w-full h-full object-cover" />
             </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-primary text-[9px] font-bold text-primary-foreground tracking-wider whitespace-nowrap">
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-md bg-warning text-[10px] font-bold text-background tracking-wider whitespace-nowrap shadow">
               LV.{g?.GuildLevel ?? "?"}
             </div>
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
               <div className="font-display font-bold text-lg truncate">{g?.GuildName ?? "Loading…"}</div>
             </div>
             <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2 flex-wrap">
               <span>ID: {order.guild_id}</span>
-              <span>|</span>
+              <span className="text-border">|</span>
               <span>🇧🇩 BD</span>
-              <span>|</span>
+              <span className="text-border">|</span>
               <span className="text-primary font-bold">{botCount} BOTS</span>
             </div>
             {g?.GuildSlogan && <div className="text-xs italic text-warning mt-1 truncate">"{g.GuildSlogan}"</div>}
@@ -277,7 +277,7 @@ function BotInstanceCard({ order }: { order: GOrder }) {
           </div>
           <div className="text-center">
             <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Crown className="w-3 h-3" />LEADER</div>
-            <div className="font-bold text-sm mt-1 truncate" title={g?.GuildLeader?.Name}>{g?.GuildLeader?.Name ?? "—"}</div>
+            <div className="font-bold text-sm mt-1 truncate" title={g?.GuildLeader?.Name ?? undefined}>{g?.GuildLeader?.Name ?? "—"}</div>
           </div>
           <div className="text-center">
             <div className="text-[10px] text-muted-foreground flex items-center justify-center gap-1"><Star className="w-3 h-3" />TOTAL GLORY</div>
