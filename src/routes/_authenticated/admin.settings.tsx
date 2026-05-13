@@ -23,6 +23,7 @@ type S = {
   payment_instructions: string;
   admin_telegram: string;
   level_up_web_url: string;
+  guild_info_api_url: string;
   logo_url: string | null;
   coupon_price_like: number;
   coupon_price_visit: number;
