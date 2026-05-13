@@ -16,7 +16,13 @@ export type GuildInfo = {
 };
 
 export async function fetchGuildInfo(guildId: string, region = "bd"): Promise<GuildInfo | null> {
-  const url = `https://danger-guild-management-web.vercel.app/guild?guild_id=${encodeURIComponent(guildId)}&region=${encodeURIComponent(region)}`;
+  // Read configurable URL template from app_settings (placeholder: {guild_id})
+  let template = "https://danger-guild-management-web.vercel.app/guild?guild_id={guild_id}&region=bd";
+  try {
+    const { data } = await supabaseAdmin.from("app_settings").select("guild_info_api_url").eq("id", 1).single();
+    if (data && (data as any).guild_info_api_url) template = (data as any).guild_info_api_url;
+  } catch {}
+  const url = template.replace(/\{guild_id\}/gi, encodeURIComponent(guildId)).replace(/\{region\}/gi, encodeURIComponent(region));
   try {
     const r = await fetch(url, { headers: { Accept: "application/json" } });
     if (!r.ok) return null;
