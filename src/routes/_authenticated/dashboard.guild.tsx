@@ -287,7 +287,14 @@ function BotInstanceCard({ order }: { order: GOrder }) {
       </Card>
 
       {/* PART 2: GS STORE Bot Instance */}
-      <Card className="bg-gradient-card border-border p-4 space-y-3">
+      <Card
+        className="relative overflow-hidden border-primary/30 p-4 space-y-3"
+        style={{
+          backgroundImage: `linear-gradient(135deg, hsl(var(--background)/0.85), hsl(var(--background)/0.92)), url(${instanceBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="flex items-start gap-3">
           <div className="w-14 h-14 rounded-xl overflow-hidden ring-2 ring-primary/40 bg-secondary shrink-0">
             <img src={gsLogo} alt="GS STORE" className="w-full h-full object-cover" />
