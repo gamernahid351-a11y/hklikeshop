@@ -23,6 +23,7 @@ type S = {
   payment_instructions: string;
   admin_telegram: string;
   level_up_web_url: string;
+  guild_info_api_url: string;
   logo_url: string | null;
   coupon_price_like: number;
   coupon_price_visit: number;
@@ -105,6 +106,10 @@ function AdminSettings() {
         <div>
           <Label>LEVEL UP WEB URL <span className="text-xs text-muted-foreground">(redirect button on landing & dashboard)</span></Label>
           <Input value={s.level_up_web_url ?? ""} onChange={(e) => setS({ ...s, level_up_web_url: e.target.value })} placeholder="https://gslevelup.lovable.app/" />
+        </div>
+        <div>
+          <Label>Guild Info API URL <span className="text-xs text-muted-foreground">(use {"{guild_id}"} placeholder — user's guild id will be inserted automatically)</span></Label>
+          <Input value={s.guild_info_api_url ?? ""} onChange={(e) => setS({ ...s, guild_info_api_url: e.target.value })} placeholder="https://danger-guild-management-web.vercel.app/guild?guild_id={guild_id}&region=bd" />
         </div>
         <div>
           <Label>Admin Telegram <span className="text-xs text-muted-foreground">(shown as a Contact Admin button to users)</span></Label>
