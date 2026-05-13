@@ -11,7 +11,7 @@ import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, A
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
 import gsLogo from "@/assets/gs-shop-logo.png";
-import lionLogo from "@/assets/guild-lion.jpg";
+import lionLogo from "@/assets/guild-lion.png";
 import instanceBg from "@/assets/instance-bg.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
