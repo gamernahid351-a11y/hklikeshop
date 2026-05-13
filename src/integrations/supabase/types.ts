@@ -24,6 +24,7 @@ export type Database = {
           coupon_price_like: number
           coupon_price_panel: number
           coupon_price_visit: number
+          guild_info_api_url: string
           id: number
           level_up_web_url: string
           like_api_url: string
@@ -42,6 +43,7 @@ export type Database = {
           coupon_price_like?: number
           coupon_price_panel?: number
           coupon_price_visit?: number
+          guild_info_api_url?: string
           id?: number
           level_up_web_url?: string
           like_api_url?: string
@@ -60,6 +62,7 @@ export type Database = {
           coupon_price_like?: number
           coupon_price_panel?: number
           coupon_price_visit?: number
+          guild_info_api_url?: string
           id?: number
           level_up_web_url?: string
           like_api_url?: string
