@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import lionLogo from "@/assets/guild-lion.jpg";
+import instanceBg from "@/assets/instance-bg.jpg";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
