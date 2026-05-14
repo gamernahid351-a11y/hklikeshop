@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Ticket, Loader2, Upload, Check, Copy, Smartphone, Receipt, Image as ImageIcon, Heart, Eye, KeyRound } from "lucide-react";
+import { Ticket, Loader2, Upload, Check, Receipt, Image as ImageIcon, Heart, Eye, KeyRound } from "lucide-react";
 import { toast } from "sonner";
+import { BkashPaymentBox } from "@/components/BkashPaymentBox";
 
 export const Route = createFileRoute("/_authenticated/dashboard/coupons")({
   component: CouponsPage,
@@ -34,7 +35,6 @@ function CouponsPage() {
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   async function load() {
     if (!user) return;
@@ -102,26 +102,7 @@ function CouponsPage() {
           <Badge className="ml-auto bg-primary/15 text-primary border-0">৳{Number(price)}</Badge>
         </div>
 
-        {bkashNumber && (
-          <div className="rounded-2xl p-4 space-y-3 border border-pink-300/50 dark:border-pink-400/30 shadow-lg"
-               style={{ background: "linear-gradient(135deg, #ec4899 0%, #d946ef 50%, #a21caf 100%)" }}>
-            <div className="flex items-center gap-2 text-white">
-              <div className="w-8 h-8 rounded-lg bg-white/20 grid place-items-center"><Smartphone className="w-4 h-4 text-white"/></div>
-              <div className="text-sm font-bold">bKash Payment</div>
-              <Badge className="ml-auto bg-white text-pink-700 border-0 font-bold hover:bg-white">৳{Number(price)}</Badge>
-            </div>
-            <div className="rounded-xl bg-white/15 backdrop-blur border border-white/30 p-3">
-              <div className="text-[10px] uppercase tracking-widest text-white/80 mb-1">Send Money to</div>
-              <div className="flex items-center justify-between gap-2">
-                <div className="font-mono font-bold text-2xl text-white tracking-wider drop-shadow">{bkashNumber}</div>
-                <Button size="sm" className="bg-white text-pink-700 hover:bg-white/90 font-bold"
-                  onClick={() => { navigator.clipboard.writeText(bkashNumber); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
-                  {copied ? <><Check className="w-3.5 h-3.5 mr-1"/>Copied</> : <><Copy className="w-3.5 h-3.5 mr-1"/>Copy</>}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+        {bkashNumber && <BkashPaymentBox number={bkashNumber} amount={price} instructions={settings?.payment_instructions} />}
 
         <div>
           <Label className="flex items-center gap-1.5"><Receipt className="w-3.5 h-3.5"/>bKash TrxID</Label>
