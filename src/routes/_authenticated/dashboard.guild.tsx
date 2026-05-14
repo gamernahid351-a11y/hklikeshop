@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2 } from "lucide-react";
+import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2, Trophy, TrendingUp, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import lionLogo from "@/assets/guild-lion.png";
 import instanceBg from "@/assets/instance-bg.jpg";
+import settingsGuide from "@/assets/guild-settings-guide.png";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
