@@ -7,18 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2 } from "lucide-react";
+import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2, Trophy, TrendingUp, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import lionLogo from "@/assets/guild-lion.png";
 import instanceBg from "@/assets/instance-bg.jpg";
+import settingsGuide from "@/assets/guild-settings-guide.png";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
 });
 
-type GPkg = { id: string; name: string; price_bdt: number; duration_label: string | null; bot_count: number; image_url: string | null; description: string | null };
+type GPkg = { id: string; name: string; price_bdt: number; duration_label: string | null; bot_count: number; image_url: string | null; description: string | null; category: string };
 type GOrder = {
   id: string; guild_id: string; status: string; trx_id: string;
   guild_package_id: string; created_at: string; expires_at: string | null;
@@ -32,6 +34,7 @@ function GuildPage() {
   const [orders, setOrders] = useState<GOrder[]>([]);
   const [bkash, setBkash] = useState("");
   const [selectedPkg, setSelectedPkg] = useState<string>("");
+  const [category, setCategory] = useState<"glory" | "level_up">("glory");
   const [guildId, setGuildId] = useState("");
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -39,18 +42,18 @@ function GuildPage() {
   const [copied, setCopied] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<any>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   async function load() {
     if (!user) return;
     const [{ data: p }, { data: o }, { data: s }] = await Promise.all([
-      supabase.from("guild_packages").select("id,name,price_bdt,duration_label,bot_count,image_url,description").eq("is_active", true).order("sort_order"),
+      supabase.from("guild_packages").select("id,name,price_bdt,duration_label,bot_count,image_url,description,category").eq("is_active", true).order("sort_order"),
       supabase.from("guild_orders").select("id,guild_id,status,trx_id,guild_package_id,created_at,expires_at,last_synced_guild,guild_packages(name,price_bdt,bot_count)").eq("user_id", user.id).order("created_at", { ascending: false }),
       supabase.from("app_settings").select("bkash_number,bkash_number_guild").eq("id", 1).maybeSingle(),
     ]);
     setPkgs((p ?? []) as GPkg[]);
     setOrders((o ?? []) as unknown as GOrder[]);
     setBkash((s as any)?.bkash_number_guild || (s as any)?.bkash_number || "");
-    if (!selectedPkg && p && p.length) setSelectedPkg(p[0].id);
   }
   useEffect(() => { load(); }, [user]);
 
@@ -79,7 +82,13 @@ function GuildPage() {
     return () => { cancelled = true; clearInterval(t); };
   }, [orders.map((o) => o.id + o.status).join(",")]);
 
-  const pkg = pkgs.find((p) => p.id === selectedPkg);
+  const filteredPkgs = pkgs.filter((p) => (p.category || "glory") === category);
+  const pkg = filteredPkgs.find((p) => p.id === selectedPkg) ?? filteredPkgs[0];
+  useEffect(() => {
+    if (!filteredPkgs.find((p) => p.id === selectedPkg)) {
+      setSelectedPkg(filteredPkgs[0]?.id ?? "");
+    }
+  }, [category, pkgs.length]);
   const liveOrders = orders.filter((o) => o.status === "approved" || o.status === "running");
 
   async function preCheck() {
@@ -128,12 +137,33 @@ function GuildPage() {
       {/* Order form */}
       <Card className="bg-gradient-card border-border p-4 space-y-3">
         <div className="font-display font-bold text-sm">Notun Bot Order</div>
+
+        {/* Category buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant={category === "glory" ? "default" : "outline"}
+            className={category === "glory" ? "bg-gradient-primary text-primary-foreground" : ""}
+            onClick={() => setCategory("glory")}
+          >
+            <Trophy className="w-4 h-4 mr-1" /> Glory Bots
+          </Button>
+          <Button
+            type="button"
+            variant={category === "level_up" ? "default" : "outline"}
+            className={category === "level_up" ? "bg-gradient-primary text-primary-foreground" : ""}
+            onClick={() => setCategory("level_up")}
+          >
+            <TrendingUp className="w-4 h-4 mr-1" /> Level Up
+          </Button>
+        </div>
+
         <div>
           <Label>Package</Label>
           <select className="w-full h-10 px-3 mt-1 rounded-md bg-background border border-input text-sm" value={selectedPkg} onChange={(e) => setSelectedPkg(e.target.value)}>
-            {pkgs.map((p) => <option key={p.id} value={p.id}>{p.name} — ৳{Number(p.price_bdt)} ({p.bot_count} bot{p.bot_count > 1 ? "s" : ""}{p.duration_label ? `, ${p.duration_label}` : ""})</option>)}
+            {filteredPkgs.map((p) => <option key={p.id} value={p.id}>{p.name} — ৳{Number(p.price_bdt)} ({p.bot_count} bot{p.bot_count > 1 ? "s" : ""}{p.duration_label ? `, ${p.duration_label}` : ""})</option>)}
           </select>
-          {pkgs.length === 0 && <div className="text-xs text-muted-foreground mt-1">Akhono kono guild bot package nei.</div>}
+          {filteredPkgs.length === 0 && <div className="text-xs text-muted-foreground mt-1">A category te kono package nei.</div>}
         </div>
 
         <div>
@@ -181,8 +211,18 @@ function GuildPage() {
           </label>
         </div>
 
-        <Button onClick={submit} disabled={busy || !pkg} className="w-full bg-gradient-primary text-primary-foreground font-semibold">
-          {busy ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />} Submit Order
+        <Button
+          onClick={() => {
+            if (!pkg) return;
+            if (!guildId.trim()) return toast.error("Guild ID din");
+            if (!trxId.trim()) return toast.error("TrxID din");
+            if (!file) return toast.error("Screenshot upload korun");
+            setConfirmOpen(true);
+          }}
+          disabled={busy || !pkg}
+          className="w-full bg-gradient-primary text-primary-foreground font-semibold"
+        >
+          {busy ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />} Launch Bot
         </Button>
       </Card>
 
@@ -211,6 +251,39 @@ function GuildPage() {
           {liveOrders.map((o) => <BotInstanceCard key={o.id} order={o} />)}
         </>
       )}
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="bg-card border-warning/50 max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-warning">
+              <AlertTriangle className="w-5 h-5" />
+              Please make your guild settings like this
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <img src={settingsGuide} alt="Guild settings reference" className="w-full rounded-lg border border-border" />
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>Bot launch korar age apnar guild a giye ai settings gulo confirm korun:</p>
+              <ul className="list-disc list-inside text-xs space-y-0.5 pl-2">
+                <li><b>Auto Approval: ON</b></li>
+                <li>LV / BR-RANKED / CS-RANKED: <b>DEFAULT</b></li>
+                <li>Slogan & Notice set kora thakte hobe</li>
+              </ul>
+              <p className="text-warning text-xs pt-1">Settings thik na thakle bot kaaj korbe na.</p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={busy}>Cancel</Button>
+            <Button
+              onClick={async () => { await submit(); setConfirmOpen(false); }}
+              disabled={busy}
+              className="bg-gradient-primary text-primary-foreground font-semibold"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />} Launch Bot
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

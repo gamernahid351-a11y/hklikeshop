@@ -17,10 +17,10 @@ export const Route = createFileRoute("/_authenticated/admin/guild")({
   component: AdminGuild,
 });
 
-type Pkg = { id: string; name: string; description: string | null; price_bdt: number; image_url: string | null; duration_label: string | null; bot_count: number; is_active: boolean; sort_order: number };
+type Pkg = { id: string; name: string; description: string | null; price_bdt: number; image_url: string | null; duration_label: string | null; bot_count: number; is_active: boolean; sort_order: number; category: string };
 type Order = { id: string; user_id: string; guild_id: string; trx_id: string; payment_screenshot_url: string | null; status: string; expires_at: string | null; created_at: string; guild_packages: { name: string; price_bdt: number } | null; user_email?: string | null };
 
-const empty: Omit<Pkg, "id"> = { name: "", description: "", price_bdt: 100, image_url: null, duration_label: "30 days", bot_count: 1, is_active: true, sort_order: 0 };
+const empty: Omit<Pkg, "id"> = { name: "", description: "", price_bdt: 100, image_url: null, duration_label: "30 days", bot_count: 1, is_active: true, sort_order: 0, category: "glory" };
 
 function AdminGuild() {
   const [tab, setTab] = useState<"orders" | "packages">("orders");
@@ -157,6 +157,13 @@ function AdminGuild() {
               <div><Label>Price ৳</Label><Input type="number" value={form.price_bdt} onChange={(e) => setForm({ ...form, price_bdt: Number(e.target.value) })} /></div>
               <div><Label>Bots</Label><Input type="number" value={form.bot_count} onChange={(e) => setForm({ ...form, bot_count: Number(e.target.value) })} /></div>
               <div><Label>Duration</Label><Input value={form.duration_label ?? ""} onChange={(e) => setForm({ ...form, duration_label: e.target.value })} /></div>
+            </div>
+            <div>
+              <Label>Category</Label>
+              <select className="w-full h-10 px-3 mt-1 rounded-md bg-background border border-input text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                <option value="glory">Glory Bots</option>
+                <option value="level_up">Level Up</option>
+              </select>
             </div>
             <div>
               <Label>Image</Label>
