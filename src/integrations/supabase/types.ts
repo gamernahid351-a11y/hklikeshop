@@ -376,6 +376,7 @@ export type Database = {
           created_at: string
           days_completed: number
           delivered_at: string | null
+          delivered_bot_name: string | null
           delivered_password: string | null
           delivered_username: string | null
           duration_days: number
@@ -404,6 +405,7 @@ export type Database = {
           created_at?: string
           days_completed?: number
           delivered_at?: string | null
+          delivered_bot_name?: string | null
           delivered_password?: string | null
           delivered_username?: string | null
           duration_days?: number
@@ -432,6 +434,7 @@ export type Database = {
           created_at?: string
           days_completed?: number
           delivered_at?: string | null
+          delivered_bot_name?: string | null
           delivered_password?: string | null
           delivered_username?: string | null
           duration_days?: number
