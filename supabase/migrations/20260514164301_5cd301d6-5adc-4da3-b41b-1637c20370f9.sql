@@ -1,0 +1,1 @@
+alter table public.orders add column if not exists delivered_bot_name text;

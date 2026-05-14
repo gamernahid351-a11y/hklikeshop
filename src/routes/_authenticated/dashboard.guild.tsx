@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Users, Loader2, Upload, Copy, Check, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2, Trophy, TrendingUp, AlertTriangle } from "lucide-react";
+import { Users, Loader2, Upload, Crown, Star, Rocket, RefreshCcw, Activity, Zap, Clock, Globe, Trash2, Trophy, TrendingUp, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { getGuildInfo } from "@/lib/guild.functions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -15,6 +15,7 @@ import gsLogo from "@/assets/gs-shop-logo.png";
 import lionLogo from "@/assets/guild-lion.png";
 import instanceBg from "@/assets/instance-bg.jpg";
 import settingsGuide from "@/assets/guild-settings-guide.png";
+import { BkashPaymentBox } from "@/components/BkashPaymentBox";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
@@ -39,7 +40,6 @@ function GuildPage() {
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<any>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -184,18 +184,7 @@ function GuildPage() {
           </Card>
         )}
 
-        {pkg && bkash && (
-          <div className="rounded-md bg-primary/10 border border-primary/30 p-3 text-sm">
-            <div className="text-xs text-muted-foreground">bKash Send Money korun:</div>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="font-mono font-bold text-base">{bkash}</span>
-              <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(bkash); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
-                {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              </Button>
-            </div>
-            <div className="text-xs mt-1">Amount: <span className="font-bold">৳{Number(pkg.price_bdt)}</span></div>
-          </div>
-        )}
+        {pkg && bkash && <BkashPaymentBox number={bkash} amount={pkg.price_bdt} />}
 
         <div>
           <Label>bKash TrxID</Label>
@@ -253,7 +242,12 @@ function GuildPage() {
       )}
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent className="bg-card border-warning/50 max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent
+          className="bg-card border-warning/50 max-w-lg max-h-[90vh] overflow-y-auto"
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-warning">
               <AlertTriangle className="w-5 h-5" />

@@ -30,6 +30,7 @@ type Order = {
   rejection_reason: string | null;
   delivered_username: string | null;
   delivered_password: string | null;
+  delivered_bot_name: string | null;
   delivered_at: string | null;
   packages: { name: string; price_bdt: number } | null;
 };
@@ -96,7 +97,7 @@ function OrdersPage() {
       const { data: settings } = await supabase.from("app_settings").select("banner_api_url").eq("id", 1).single();
       const { data } = await supabase
         .from("orders")
-        .select("id,ff_uid,status,type,likes_per_day,duration_days,days_completed,total_likes_sent,visits_target,visits_delivered,next_run_at,approved_at,created_at,rejection_reason,delivered_username,delivered_password,delivered_at,packages(name,price_bdt)")
+        .select("id,ff_uid,status,type,likes_per_day,duration_days,days_completed,total_likes_sent,visits_target,visits_delivered,next_run_at,approved_at,created_at,rejection_reason,delivered_username,delivered_password,delivered_bot_name,delivered_at,packages(name,price_bdt)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -223,6 +224,15 @@ function OrdersPage() {
                 {isLevelUp && o.delivered_username && o.delivered_password && (
                   <div className="p-4 space-y-2 border-b border-border bg-success/5">
                     <div className="text-xs font-bold text-success flex items-center gap-1.5"><Crown className="w-3.5 h-3.5"/>LEVEL UP Account Delivered</div>
+                    {o.delivered_bot_name && (
+                      <div>
+                        <div className="text-[10px] text-muted-foreground">Bot Name</div>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 font-mono text-sm bg-background border border-border rounded px-2 py-1.5">{o.delivered_bot_name}</code>
+                          <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(o.delivered_bot_name!); toast.success("Copied"); }}><Copy className="w-3.5 h-3.5"/></Button>
+                        </div>
+                      </div>
+                    )}
                     <div>
                       <div className="text-[10px] text-muted-foreground">Username</div>
                       <div className="flex items-center gap-2">

@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { KeyRound, Loader2, Upload, Copy, Check, Smartphone, Receipt, Image as ImageIcon, AlertCircle, Volume2, VolumeX, Play } from "lucide-react";
+import { KeyRound, Loader2, Upload, Check, Receipt, Image as ImageIcon, Volume2, VolumeX, Play } from "lucide-react";
 import { toast } from "sonner";
+import { BkashPaymentBox } from "@/components/BkashPaymentBox";
 
 export const Route = createFileRoute("/_authenticated/dashboard/panels")({
   component: PanelsPage,
@@ -88,7 +89,6 @@ function PanelsPage() {
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -150,31 +150,8 @@ function PanelsPage() {
           </DialogHeader>
 
           <div className="space-y-4">
-            {settings && bkash && (
-              <div className="rounded-2xl p-4 space-y-3 border border-pink-300/50 dark:border-pink-400/30 shadow-lg"
-                   style={{ background: "linear-gradient(135deg, #ec4899 0%, #d946ef 50%, #a21caf 100%)" }}>
-                <div className="flex items-center gap-2 text-white">
-                  <div className="w-8 h-8 rounded-lg bg-white/20 grid place-items-center backdrop-blur"><Smartphone className="w-4 h-4 text-white" /></div>
-                  <div className="text-sm font-bold">bKash Payment</div>
-                  <Badge className="ml-auto bg-white text-pink-700 border-0 font-bold hover:bg-white">৳{Number(selected?.price_bdt)}</Badge>
-                </div>
-                <div className="rounded-xl bg-white/15 backdrop-blur border border-white/30 p-3">
-                  <div className="text-[10px] uppercase tracking-widest text-white/80 mb-1">Send Money to</div>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="font-mono font-bold text-2xl text-white tracking-wider drop-shadow">{bkash}</div>
-                    <Button size="sm" className="bg-white text-pink-700 hover:bg-white/90 font-bold"
-                      onClick={() => { navigator.clipboard.writeText(bkash); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>
-                      {copied ? <><Check className="w-3.5 h-3.5 mr-1"/>Copied</> : <><Copy className="w-3.5 h-3.5 mr-1"/>Copy</>}
-                    </Button>
-                  </div>
-                </div>
-                {settings.payment_instructions && (
-                  <details className="text-xs text-white/95">
-                    <summary className="cursor-pointer flex items-center gap-1 opacity-90"><AlertCircle className="w-3 h-3" /> More details</summary>
-                    <pre className="whitespace-pre-wrap mt-2 font-sans bg-white/10 p-2 rounded border border-white/20">{settings.payment_instructions.replace("{bkash}", bkash)}</pre>
-                  </details>
-                )}
-              </div>
+            {settings && bkash && selected && (
+              <BkashPaymentBox number={bkash} amount={selected.price_bdt} instructions={settings.payment_instructions} />
             )}
 
             <div>
