@@ -159,6 +159,13 @@ function AdminGuild() {
               <div><Label>Duration</Label><Input value={form.duration_label ?? ""} onChange={(e) => setForm({ ...form, duration_label: e.target.value })} /></div>
             </div>
             <div>
+              <Label>Category</Label>
+              <select className="w-full h-10 px-3 mt-1 rounded-md bg-background border border-input text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                <option value="glory">Glory Bots</option>
+                <option value="level_up">Level Up</option>
+              </select>
+            </div>
+            <div>
               <Label>Image</Label>
               <div className="mt-1 rounded-md border border-border overflow-hidden">
                 {form.image_url ? <img src={form.image_url} className="w-full aspect-video object-cover" /> : <div className="aspect-video grid place-items-center text-xs text-muted-foreground">No image</div>}
