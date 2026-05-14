@@ -34,6 +34,7 @@ function GuildPage() {
   const [orders, setOrders] = useState<GOrder[]>([]);
   const [bkash, setBkash] = useState("");
   const [selectedPkg, setSelectedPkg] = useState<string>("");
+  const [category, setCategory] = useState<"glory" | "level_up">("glory");
   const [guildId, setGuildId] = useState("");
   const [trxId, setTrxId] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -41,6 +42,7 @@ function GuildPage() {
   const [copied, setCopied] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<any>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   async function load() {
     if (!user) return;
