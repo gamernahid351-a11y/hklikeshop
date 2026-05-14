@@ -253,6 +253,7 @@ export type Database = {
       guild_packages: {
         Row: {
           bot_count: number
+          category: string
           created_at: string
           description: string | null
           duration_label: string | null
@@ -266,6 +267,7 @@ export type Database = {
         }
         Insert: {
           bot_count?: number
+          category?: string
           created_at?: string
           description?: string | null
           duration_label?: string | null
@@ -279,6 +281,7 @@ export type Database = {
         }
         Update: {
           bot_count?: number
+          category?: string
           created_at?: string
           description?: string | null
           duration_label?: string | null
