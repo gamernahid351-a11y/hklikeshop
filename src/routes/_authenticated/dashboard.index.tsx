@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  ShoppingCart, Heart, Eye, KeyRound, BadgeCheck, Tag, Users,
+  ShoppingCart, Heart, Eye, KeyRound, BadgeCheck, Tag, Users, Crown,
   Volume2, VolumeX, ChevronLeft, ChevronRight, Send,
 } from "lucide-react";
 
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/")({
   component: Dashboard,
 });
 
-type Pkg = { id: string; name: string; description: string | null; price_bdt: number; type: "like" | "visit"; image_url: string | null };
+type Pkg = { id: string; name: string; description: string | null; price_bdt: number; type: "like" | "visit" | "levelup"; image_url: string | null };
 type Panel = { id: string; name: string; description: string | null; price_bdt: number; video_url: string | null; image_url: string | null; apk_link: string | null; duration_label: string | null; panel_category_id: string | null };
 type PanelCat = { id: string; name: string };
 type GuildPkg = { id: string; name: string; description: string | null; price_bdt: number; image_url: string | null; duration_label: string | null; bot_count: number };
@@ -49,6 +49,7 @@ function Dashboard() {
 
   const likes = pkgs.filter((p) => p.type === "like");
   const visits = pkgs.filter((p) => p.type === "visit");
+  const levelups = pkgs.filter((p) => p.type === "levelup");
   const heroSlides = slides.length > 0
     ? slides.map((s) => ({ id: s.id, title: s.title ?? "", image: s.image_url, link: s.link_url }))
     : [{ id: "hero", title: `Hi ${user?.email?.split("@")[0] ?? ""} 👋`, image: null, link: null }];
@@ -71,6 +72,11 @@ function Dashboard() {
       {visits.length > 0 && (
         <ProductSection title="VISITS PACKAGES" icon={Eye}>
           {visits.map((p) => <PackageCard key={p.id} pkg={p} to="/dashboard/packages" />)}
+        </ProductSection>
+      )}
+      {levelups.length > 0 && (
+        <ProductSection title="LEVEL UP BOT" icon={Crown}>
+          {levelups.map((p) => <PackageCard key={p.id} pkg={p} to="/dashboard/packages?type=levelup" />)}
         </ProductSection>
       )}
       {panels.length > 0 && <PanelsByCategory panels={panels} categories={panelCats} />}
@@ -140,7 +146,7 @@ function ProductSection({ title, icon: Icon, children }: { title: string; icon: 
 }
 
 function PackageCard({ pkg, to }: { pkg: Pkg; to: string }) {
-  const Icon = pkg.type === "visit" ? Eye : Heart;
+  const Icon = pkg.type === "visit" ? Eye : pkg.type === "levelup" ? Crown : Heart;
   return (
     <Card className="bg-gradient-card border-border overflow-hidden shadow-card flex flex-col">
       <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border/60">
