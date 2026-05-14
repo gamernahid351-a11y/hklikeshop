@@ -41,7 +41,6 @@ function GuildPage() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [previewing, setPreviewing] = useState(false);
-  const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<any>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
