@@ -211,8 +211,18 @@ function GuildPage() {
           </label>
         </div>
 
-        <Button onClick={submit} disabled={busy || !pkg} className="w-full bg-gradient-primary text-primary-foreground font-semibold">
-          {busy ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />} Submit Order
+        <Button
+          onClick={() => {
+            if (!pkg) return;
+            if (!guildId.trim()) return toast.error("Guild ID din");
+            if (!trxId.trim()) return toast.error("TrxID din");
+            if (!file) return toast.error("Screenshot upload korun");
+            setConfirmOpen(true);
+          }}
+          disabled={busy || !pkg}
+          className="w-full bg-gradient-primary text-primary-foreground font-semibold"
+        >
+          {busy ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />} Launch Bot
         </Button>
       </Card>
 
