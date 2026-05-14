@@ -82,7 +82,13 @@ function GuildPage() {
     return () => { cancelled = true; clearInterval(t); };
   }, [orders.map((o) => o.id + o.status).join(",")]);
 
-  const pkg = pkgs.find((p) => p.id === selectedPkg);
+  const filteredPkgs = pkgs.filter((p) => (p.category || "glory") === category);
+  const pkg = filteredPkgs.find((p) => p.id === selectedPkg) ?? filteredPkgs[0];
+  useEffect(() => {
+    if (!filteredPkgs.find((p) => p.id === selectedPkg)) {
+      setSelectedPkg(filteredPkgs[0]?.id ?? "");
+    }
+  }, [category, pkgs.length]);
   const liveOrders = orders.filter((o) => o.status === "approved" || o.status === "running");
 
   async function preCheck() {
