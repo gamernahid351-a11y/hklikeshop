@@ -47,14 +47,13 @@ function GuildPage() {
   async function load() {
     if (!user) return;
     const [{ data: p }, { data: o }, { data: s }] = await Promise.all([
-      supabase.from("guild_packages").select("id,name,price_bdt,duration_label,bot_count,image_url,description").eq("is_active", true).order("sort_order"),
+      supabase.from("guild_packages").select("id,name,price_bdt,duration_label,bot_count,image_url,description,category").eq("is_active", true).order("sort_order"),
       supabase.from("guild_orders").select("id,guild_id,status,trx_id,guild_package_id,created_at,expires_at,last_synced_guild,guild_packages(name,price_bdt,bot_count)").eq("user_id", user.id).order("created_at", { ascending: false }),
       supabase.from("app_settings").select("bkash_number,bkash_number_guild").eq("id", 1).maybeSingle(),
     ]);
     setPkgs((p ?? []) as GPkg[]);
     setOrders((o ?? []) as unknown as GOrder[]);
     setBkash((s as any)?.bkash_number_guild || (s as any)?.bkash_number || "");
-    if (!selectedPkg && p && p.length) setSelectedPkg(p[0].id);
   }
   useEffect(() => { load(); }, [user]);
 
