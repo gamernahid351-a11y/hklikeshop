@@ -76,7 +76,7 @@ function Dashboard() {
       )}
       {levelups.length > 0 && (
         <ProductSection title="LEVEL UP BOT" icon={Crown}>
-          {levelups.map((p) => <PackageCard key={p.id} pkg={p} to="/dashboard/packages?type=levelup" />)}
+          {levelups.map((p) => <PackageCard key={p.id} pkg={p} to="/dashboard/packages" />)}
         </ProductSection>
       )}
       {panels.length > 0 && <PanelsByCategory panels={panels} categories={panelCats} />}
