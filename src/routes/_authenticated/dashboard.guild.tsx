@@ -137,12 +137,33 @@ function GuildPage() {
       {/* Order form */}
       <Card className="bg-gradient-card border-border p-4 space-y-3">
         <div className="font-display font-bold text-sm">Notun Bot Order</div>
+
+        {/* Category buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant={category === "glory" ? "default" : "outline"}
+            className={category === "glory" ? "bg-gradient-primary text-primary-foreground" : ""}
+            onClick={() => setCategory("glory")}
+          >
+            <Trophy className="w-4 h-4 mr-1" /> Glory Bots
+          </Button>
+          <Button
+            type="button"
+            variant={category === "level_up" ? "default" : "outline"}
+            className={category === "level_up" ? "bg-gradient-primary text-primary-foreground" : ""}
+            onClick={() => setCategory("level_up")}
+          >
+            <TrendingUp className="w-4 h-4 mr-1" /> Level Up
+          </Button>
+        </div>
+
         <div>
           <Label>Package</Label>
           <select className="w-full h-10 px-3 mt-1 rounded-md bg-background border border-input text-sm" value={selectedPkg} onChange={(e) => setSelectedPkg(e.target.value)}>
-            {pkgs.map((p) => <option key={p.id} value={p.id}>{p.name} — ৳{Number(p.price_bdt)} ({p.bot_count} bot{p.bot_count > 1 ? "s" : ""}{p.duration_label ? `, ${p.duration_label}` : ""})</option>)}
+            {filteredPkgs.map((p) => <option key={p.id} value={p.id}>{p.name} — ৳{Number(p.price_bdt)} ({p.bot_count} bot{p.bot_count > 1 ? "s" : ""}{p.duration_label ? `, ${p.duration_label}` : ""})</option>)}
           </select>
-          {pkgs.length === 0 && <div className="text-xs text-muted-foreground mt-1">Akhono kono guild bot package nei.</div>}
+          {filteredPkgs.length === 0 && <div className="text-xs text-muted-foreground mt-1">A category te kono package nei.</div>}
         </div>
 
         <div>
