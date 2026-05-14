@@ -251,6 +251,39 @@ function GuildPage() {
           {liveOrders.map((o) => <BotInstanceCard key={o.id} order={o} />)}
         </>
       )}
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="bg-card border-warning/50 max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-warning">
+              <AlertTriangle className="w-5 h-5" />
+              Please make your guild settings like this
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <img src={settingsGuide} alt="Guild settings reference" className="w-full rounded-lg border border-border" />
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>Bot launch korar age apnar guild a giye ai settings gulo confirm korun:</p>
+              <ul className="list-disc list-inside text-xs space-y-0.5 pl-2">
+                <li><b>Auto Approval: ON</b></li>
+                <li>LV / BR-RANKED / CS-RANKED: <b>DEFAULT</b></li>
+                <li>Slogan & Notice set kora thakte hobe</li>
+              </ul>
+              <p className="text-warning text-xs pt-1">Settings thik na thakle bot kaaj korbe na.</p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={busy}>Cancel</Button>
+            <Button
+              onClick={async () => { await submit(); setConfirmOpen(false); }}
+              disabled={busy}
+              className="bg-gradient-primary text-primary-foreground font-semibold"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />} Launch Bot
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
