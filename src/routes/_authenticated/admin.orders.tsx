@@ -25,6 +25,7 @@ type Order = {
   type: "like" | "visit" | "levelup";
   delivered_username: string | null;
   delivered_password: string | null;
+  delivered_bot_name: string | null;
   delivered_at: string | null;
   likes_per_day: number;
   duration_days: number;
@@ -50,6 +51,7 @@ function AdminOrders() {
   const [deliver, setDeliver] = useState<Order | null>(null);
   const [delivU, setDelivU] = useState("");
   const [delivP, setDelivP] = useState("");
+  const [delivBot, setDelivBot] = useState("");
 
   async function load() {
     setLoading(true);
@@ -101,7 +103,7 @@ function AdminOrders() {
 
   async function doDeliver() {
     if (!deliver) return;
-    if (!delivU.trim() || !delivP.trim()) return toast.error("Username & Password din");
+    if (!delivU.trim() || !delivP.trim() || !delivBot.trim()) return toast.error("Bot name, Username & Password din");
     setBusyId(deliver.id);
     try {
       const { error } = await supabase.from("orders").update({
@@ -109,11 +111,12 @@ function AdminOrders() {
         approved_at: new Date().toISOString(),
         delivered_username: delivU.trim(),
         delivered_password: delivP.trim(),
+        delivered_bot_name: delivBot.trim(),
         delivered_at: new Date().toISOString(),
-      }).eq("id", deliver.id);
+      } as any).eq("id", deliver.id);
       if (error) throw error;
       toast.success("Delivered!");
-      setDeliver(null); setDelivU(""); setDelivP("");
+      setDeliver(null); setDelivU(""); setDelivP(""); setDelivBot("");
       await load();
     } catch (e: any) { toast.error(e.message); } finally { setBusyId(null); }
   }
@@ -185,7 +188,7 @@ function AdminOrders() {
                 {o.status === "pending" && (
                   <>
                     {kind === "levelup" ? (
-                      <Button size="sm" onClick={() => { setDeliver(o); setDelivU(""); setDelivP(""); }} className="bg-success text-success-foreground hover:bg-success/90">
+                      <Button size="sm" onClick={() => { setDeliver(o); setDelivU(""); setDelivP(""); setDelivBot(""); }} className="bg-success text-success-foreground hover:bg-success/90">
                         <Send className="w-3.5 h-3.5 mr-1"/>Deliver creds
                       </Button>
                     ) : (
@@ -242,6 +245,10 @@ function AdminOrders() {
           <div className="space-y-3">
             <div className="text-xs text-muted-foreground">
               Order #{deliver?.id.slice(0,8)} • {deliver?.user_email}
+            </div>
+            <div>
+              <Label>Bot Name</Label>
+              <Input value={delivBot} onChange={(e) => setDelivBot(e.target.value)} placeholder="e.g. ProBot42" />
             </div>
             <div>
               <Label>Username</Label>
