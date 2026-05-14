@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/guild")({
   component: GuildPage,
 });
 
-type GPkg = { id: string; name: string; price_bdt: number; duration_label: string | null; bot_count: number; image_url: string | null; description: string | null };
+type GPkg = { id: string; name: string; price_bdt: number; duration_label: string | null; bot_count: number; image_url: string | null; description: string | null; category: string };
 type GOrder = {
   id: string; guild_id: string; status: string; trx_id: string;
   guild_package_id: string; created_at: string; expires_at: string | null;
