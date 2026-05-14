@@ -17,10 +17,10 @@ export const Route = createFileRoute("/_authenticated/admin/guild")({
   component: AdminGuild,
 });
 
-type Pkg = { id: string; name: string; description: string | null; price_bdt: number; image_url: string | null; duration_label: string | null; bot_count: number; is_active: boolean; sort_order: number };
+type Pkg = { id: string; name: string; description: string | null; price_bdt: number; image_url: string | null; duration_label: string | null; bot_count: number; is_active: boolean; sort_order: number; category: string };
 type Order = { id: string; user_id: string; guild_id: string; trx_id: string; payment_screenshot_url: string | null; status: string; expires_at: string | null; created_at: string; guild_packages: { name: string; price_bdt: number } | null; user_email?: string | null };
 
-const empty: Omit<Pkg, "id"> = { name: "", description: "", price_bdt: 100, image_url: null, duration_label: "30 days", bot_count: 1, is_active: true, sort_order: 0 };
+const empty: Omit<Pkg, "id"> = { name: "", description: "", price_bdt: 100, image_url: null, duration_label: "30 days", bot_count: 1, is_active: true, sort_order: 0, category: "glory" };
 
 function AdminGuild() {
   const [tab, setTab] = useState<"orders" | "packages">("orders");
