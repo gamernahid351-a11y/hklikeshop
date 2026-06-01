@@ -55,5 +55,11 @@ export async function fetchLandingData() {
     panelCategories: panelCats ?? [],
     logoUrl: (settings?.logo_url as string | null) ?? null,
     levelUpWebUrl: ((settings as any)?.level_up_web_url as string | null) ?? "https://gslevelup.lovable.app/",
+    notice: {
+      enabled: Boolean((settings as any)?.landing_notice_enabled),
+      imageUrl: ((settings as any)?.landing_notice_image_url as string) ?? "",
+      telegramUrl: ((settings as any)?.landing_notice_telegram_url as string) ?? "",
+      text: ((settings as any)?.landing_notice_text as string) ?? "",
+    },
   };
 }
