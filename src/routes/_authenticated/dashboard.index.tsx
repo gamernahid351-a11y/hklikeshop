@@ -87,10 +87,7 @@ function Dashboard() {
         </ProductSection>
       )}
 
-      <a href={`https://t.me/${tgHandle}`} target="_blank" rel="noopener noreferrer"
-        className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full grid place-items-center bg-[#229ED9] text-white shadow-[0_0_24px_rgba(34,158,217,0.6)] ring-2 ring-[#229ED9]/40">
-        <Send className="w-6 h-6" />
-      </a>
+      <SupportButton />
     </div>
   );
 }
