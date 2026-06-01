@@ -91,7 +91,8 @@ function Landing() {
         : [{ id: "fallback", title: "Free Fire APKMOD & Panels", image: null as string | null, video: null as string | null, link: null as string | null }];
 
   return (
-    <div className="min-h-screen">
+    <div className="landing-light min-h-screen bg-background text-foreground">
+      <LandingNoticePopup notice={notice} />
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/70 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
