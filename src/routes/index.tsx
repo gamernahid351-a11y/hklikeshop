@@ -10,6 +10,7 @@ import {
   Volume2, VolumeX, ChevronLeft, ChevronRight, BadgeCheck, Tag, Sparkles, Users,
 } from "lucide-react";
 import gsLogo from "@/assets/gs-shop-logo.png";
+import { LandingNoticePopup } from "@/components/LandingNoticePopup";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,6 +57,7 @@ function Landing() {
   const [levelUpUrl, setLevelUpUrl] = useState("https://gslevelup.lovable.app/");
   const [guildPkgs, setGuildPkgs] = useState<GuildPkg[]>([]);
   const [panelCats, setPanelCats] = useState<PanelCat[]>([]);
+  const [notice, setNotice] = useState<{ enabled: boolean; imageUrl: string; telegramUrl: string; text: string } | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
@@ -73,6 +75,7 @@ function Landing() {
       if ((data as any).levelUpWebUrl) setLevelUpUrl((data as any).levelUpWebUrl);
       setGuildPkgs(((data as any).guildPackages ?? []) as GuildPkg[]);
       setPanelCats(((data as any).panelCategories ?? []) as PanelCat[]);
+      if ((data as any).notice) setNotice((data as any).notice);
     })();
   }, []);
 
@@ -88,7 +91,8 @@ function Landing() {
         : [{ id: "fallback", title: "Free Fire APKMOD & Panels", image: null as string | null, video: null as string | null, link: null as string | null }];
 
   return (
-    <div className="min-h-screen">
+    <div className="landing-light min-h-screen bg-background text-foreground">
+      <LandingNoticePopup notice={notice} />
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/70 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">

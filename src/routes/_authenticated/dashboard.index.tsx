@@ -6,8 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   ShoppingCart, Heart, Eye, KeyRound, BadgeCheck, Tag, Users, Crown,
-  Volume2, VolumeX, ChevronLeft, ChevronRight, Send,
+  Volume2, VolumeX, ChevronLeft, ChevronRight,
 } from "lucide-react";
+import { SupportButton } from "@/components/SupportButton";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   component: Dashboard,
@@ -26,24 +27,21 @@ function Dashboard() {
   const [guildPkgs, setGuildPkgs] = useState<GuildPkg[]>([]);
   const [panelCats, setPanelCats] = useState<PanelCat[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
-  const [tg, setTg] = useState("@proxaura");
 
   useEffect(() => {
     (async () => {
-      const [{ data: pk }, { data: pn }, { data: sl }, { data: gp }, { data: pc }, { data: s }] = await Promise.all([
+      const [{ data: pk }, { data: pn }, { data: sl }, { data: gp }, { data: pc }] = await Promise.all([
         supabase.from("packages").select("id,name,description,price_bdt,type,image_url").eq("is_active", true).order("sort_order"),
         supabase.from("panel_packages").select("id,name,description,price_bdt,video_url,image_url,apk_link,duration_label,panel_category_id").eq("is_active", true).order("sort_order"),
         supabase.from("hero_slides").select("id,image_url,link_url,title").eq("is_active", true).order("sort_order"),
         supabase.from("guild_packages").select("id,name,description,price_bdt,image_url,duration_label,bot_count").eq("is_active", true).order("sort_order"),
         supabase.from("panel_categories").select("id,name").eq("is_active", true).order("sort_order"),
-        supabase.from("app_settings").select("admin_telegram").eq("id", 1).maybeSingle(),
       ]);
       setPkgs((pk ?? []) as Pkg[]);
       setPanels((pn ?? []) as Panel[]);
       setSlides((sl ?? []) as Slide[]);
       setGuildPkgs((gp ?? []) as GuildPkg[]);
       setPanelCats((pc ?? []) as PanelCat[]);
-      if (s?.admin_telegram) setTg(s.admin_telegram);
     })();
   }, []);
 
@@ -53,7 +51,7 @@ function Dashboard() {
   const heroSlides = slides.length > 0
     ? slides.map((s) => ({ id: s.id, title: s.title ?? "", image: s.image_url, link: s.link_url }))
     : [{ id: "hero", title: `Hi ${user?.email?.split("@")[0] ?? ""} 👋`, image: null, link: null }];
-  const tgHandle = tg.replace(/^@/, "");
+  
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-8">
@@ -86,10 +84,7 @@ function Dashboard() {
         </ProductSection>
       )}
 
-      <a href={`https://t.me/${tgHandle}`} target="_blank" rel="noopener noreferrer"
-        className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full grid place-items-center bg-[#229ED9] text-white shadow-[0_0_24px_rgba(34,158,217,0.6)] ring-2 ring-[#229ED9]/40">
-        <Send className="w-6 h-6" />
-      </a>
+      <SupportButton />
     </div>
   );
 }
