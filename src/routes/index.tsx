@@ -57,6 +57,7 @@ function Landing() {
   const [levelUpUrl, setLevelUpUrl] = useState("https://gslevelup.lovable.app/");
   const [guildPkgs, setGuildPkgs] = useState<GuildPkg[]>([]);
   const [panelCats, setPanelCats] = useState<PanelCat[]>([]);
+  const [notice, setNotice] = useState<{ enabled: boolean; imageUrl: string; telegramUrl: string; text: string } | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
