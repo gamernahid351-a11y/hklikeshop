@@ -6,8 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   ShoppingCart, Heart, Eye, KeyRound, BadgeCheck, Tag, Users, Crown,
-  Volume2, VolumeX, ChevronLeft, ChevronRight, Send,
+  Volume2, VolumeX, ChevronLeft, ChevronRight,
 } from "lucide-react";
+import { SupportButton } from "@/components/SupportButton";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   component: Dashboard,
