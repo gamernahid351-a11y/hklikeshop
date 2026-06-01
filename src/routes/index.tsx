@@ -10,6 +10,7 @@ import {
   Volume2, VolumeX, ChevronLeft, ChevronRight, BadgeCheck, Tag, Sparkles, Users,
 } from "lucide-react";
 import gsLogo from "@/assets/gs-shop-logo.png";
+import { LandingNoticePopup } from "@/components/LandingNoticePopup";
 
 export const Route = createFileRoute("/")({
   head: () => ({
