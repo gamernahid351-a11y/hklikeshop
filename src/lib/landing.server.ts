@@ -27,7 +27,7 @@ export async function fetchLandingData() {
         .order("sort_order"),
       supabaseAdmin
         .from("app_settings")
-        .select("logo_url, level_up_web_url")
+        .select("logo_url, level_up_web_url, landing_notice_enabled, landing_notice_image_url, landing_notice_telegram_url, landing_notice_text")
         .eq("id", 1)
         .maybeSingle(),
       supabaseAdmin
