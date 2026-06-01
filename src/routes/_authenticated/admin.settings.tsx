@@ -132,6 +132,55 @@ function AdminSettings() {
           <div><Label>Coupon ৳ (Visit)</Label><Input type="number" value={s.coupon_price_visit} onChange={(e) => setS({ ...s, coupon_price_visit: Number(e.target.value) })} /></div>
           <div><Label>Coupon ৳ (Panel)</Label><Input type="number" value={s.coupon_price_panel} onChange={(e) => setS({ ...s, coupon_price_panel: Number(e.target.value) })} /></div>
         </div>
+
+        <div className="pt-2 border-t border-border">
+          <div className="font-display font-bold text-sm mb-2">Support Contacts <span className="text-xs text-muted-foreground font-normal">(headphone button on dashboard)</span></div>
+          <div className="space-y-3">
+            <div>
+              <Label>WhatsApp URL</Label>
+              <Input value={s.support_whatsapp_url ?? ""} onChange={(e) => setS({ ...s, support_whatsapp_url: e.target.value })} placeholder="https://wa.me/8801XXXXXXXXX" />
+            </div>
+            <div>
+              <Label>Telegram URL</Label>
+              <Input value={s.support_telegram_url ?? ""} onChange={(e) => setS({ ...s, support_telegram_url: e.target.value })} placeholder="https://t.me/yourhandle" />
+            </div>
+            <div>
+              <Label>Messenger URL</Label>
+              <Input value={s.support_messenger_url ?? ""} onChange={(e) => setS({ ...s, support_messenger_url: e.target.value })} placeholder="https://m.me/yourpage" />
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-border">
+          <div className="font-display font-bold text-sm mb-2">Landing Page Notice Popup <span className="text-xs text-muted-foreground font-normal">(shows when web opens, auto-closes in 5s)</span></div>
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={!!s.landing_notice_enabled} onChange={(e) => setS({ ...s, landing_notice_enabled: e.target.checked })} />
+              Enable notice popup
+            </label>
+            <div>
+              <Label>Notice Image</Label>
+              <div className="mt-1 rounded-lg border border-border overflow-hidden">
+                {s.landing_notice_image_url ? <div className="aspect-square bg-secondary/40 grid place-items-center max-h-48"><img src={s.landing_notice_image_url} alt="notice" className="max-h-48 object-contain"/></div>
+                  : <div className="aspect-[3/1] grid place-items-center text-muted-foreground text-xs"><ImageIcon className="w-5 h-5 mr-1"/>No image</div>}
+                <label className="flex items-center justify-center gap-2 p-2 border-t border-border bg-secondary/30 cursor-pointer text-sm">
+                  {uploading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Upload className="w-4 h-4"/>}
+                  <span>{uploading ? "Uploading..." : "Upload notice image"}</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0], "notice", "landing_notice_image_url")} />
+                </label>
+              </div>
+            </div>
+            <div>
+              <Label>Notice Text</Label>
+              <Input value={s.landing_notice_text ?? ""} onChange={(e) => setS({ ...s, landing_notice_text: e.target.value })} placeholder="Join our Telegram channel!" />
+            </div>
+            <div>
+              <Label>Telegram Channel URL <span className="text-xs text-muted-foreground">(button on the notice)</span></Label>
+              <Input value={s.landing_notice_telegram_url ?? ""} onChange={(e) => setS({ ...s, landing_notice_telegram_url: e.target.value })} placeholder="https://t.me/yourchannel" />
+            </div>
+          </div>
+        </div>
+
         <Button onClick={save} disabled={busy} className="bg-gradient-primary text-primary-foreground hover:opacity-90 w-full">
           {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : "Save settings"}
         </Button>
