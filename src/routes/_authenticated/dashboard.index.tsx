@@ -27,24 +27,21 @@ function Dashboard() {
   const [guildPkgs, setGuildPkgs] = useState<GuildPkg[]>([]);
   const [panelCats, setPanelCats] = useState<PanelCat[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
-  const [tg, setTg] = useState("@proxaura");
 
   useEffect(() => {
     (async () => {
-      const [{ data: pk }, { data: pn }, { data: sl }, { data: gp }, { data: pc }, { data: s }] = await Promise.all([
+      const [{ data: pk }, { data: pn }, { data: sl }, { data: gp }, { data: pc }] = await Promise.all([
         supabase.from("packages").select("id,name,description,price_bdt,type,image_url").eq("is_active", true).order("sort_order"),
         supabase.from("panel_packages").select("id,name,description,price_bdt,video_url,image_url,apk_link,duration_label,panel_category_id").eq("is_active", true).order("sort_order"),
         supabase.from("hero_slides").select("id,image_url,link_url,title").eq("is_active", true).order("sort_order"),
         supabase.from("guild_packages").select("id,name,description,price_bdt,image_url,duration_label,bot_count").eq("is_active", true).order("sort_order"),
         supabase.from("panel_categories").select("id,name").eq("is_active", true).order("sort_order"),
-        supabase.from("app_settings").select("admin_telegram").eq("id", 1).maybeSingle(),
       ]);
       setPkgs((pk ?? []) as Pkg[]);
       setPanels((pn ?? []) as Panel[]);
       setSlides((sl ?? []) as Slide[]);
       setGuildPkgs((gp ?? []) as GuildPkg[]);
       setPanelCats((pc ?? []) as PanelCat[]);
-      if (s?.admin_telegram) setTg(s.admin_telegram);
     })();
   }, []);
 
