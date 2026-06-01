@@ -26,11 +26,18 @@ export type Database = {
           coupon_price_visit: number
           guild_info_api_url: string
           id: number
+          landing_notice_enabled: boolean
+          landing_notice_image_url: string
+          landing_notice_telegram_url: string
+          landing_notice_text: string
           level_up_web_url: string
           like_api_url: string
           logo_url: string | null
           payment_instructions: string
           rupantor_enabled: boolean
+          support_messenger_url: string
+          support_telegram_url: string
+          support_whatsapp_url: string
           updated_at: string
           visit_api_url: string
         }
@@ -45,11 +52,18 @@ export type Database = {
           coupon_price_visit?: number
           guild_info_api_url?: string
           id?: number
+          landing_notice_enabled?: boolean
+          landing_notice_image_url?: string
+          landing_notice_telegram_url?: string
+          landing_notice_text?: string
           level_up_web_url?: string
           like_api_url?: string
           logo_url?: string | null
           payment_instructions?: string
           rupantor_enabled?: boolean
+          support_messenger_url?: string
+          support_telegram_url?: string
+          support_whatsapp_url?: string
           updated_at?: string
           visit_api_url?: string
         }
@@ -64,11 +78,18 @@ export type Database = {
           coupon_price_visit?: number
           guild_info_api_url?: string
           id?: number
+          landing_notice_enabled?: boolean
+          landing_notice_image_url?: string
+          landing_notice_telegram_url?: string
+          landing_notice_text?: string
           level_up_web_url?: string
           like_api_url?: string
           logo_url?: string | null
           payment_instructions?: string
           rupantor_enabled?: boolean
+          support_messenger_url?: string
+          support_telegram_url?: string
+          support_whatsapp_url?: string
           updated_at?: string
           visit_api_url?: string
         }
