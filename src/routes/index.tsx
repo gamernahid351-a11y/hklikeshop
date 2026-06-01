@@ -75,6 +75,7 @@ function Landing() {
       if ((data as any).levelUpWebUrl) setLevelUpUrl((data as any).levelUpWebUrl);
       setGuildPkgs(((data as any).guildPackages ?? []) as GuildPkg[]);
       setPanelCats(((data as any).panelCategories ?? []) as PanelCat[]);
+      if ((data as any).notice) setNotice((data as any).notice);
     })();
   }, []);
 
