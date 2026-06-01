@@ -28,6 +28,13 @@ type S = {
   coupon_price_like: number;
   coupon_price_visit: number;
   coupon_price_panel: number;
+  support_whatsapp_url: string;
+  support_telegram_url: string;
+  support_messenger_url: string;
+  landing_notice_enabled: boolean;
+  landing_notice_image_url: string;
+  landing_notice_telegram_url: string;
+  landing_notice_text: string;
 };
 
 function AdminSettings() {
