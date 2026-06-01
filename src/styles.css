@@ -194,3 +194,31 @@
   50%      { box-shadow: 0 0 22px #1E66FFcc, 0 0 48px #00E5FFaa; }
 }
 @utility animate-neon-pulse { animation: neon-pulse 2.4s ease-in-out infinite; }
+
+/* Landing page light theme — overrides tokens within .landing-light scope */
+.landing-light {
+  --background: oklch(0.98 0.005 250);
+  --foreground: oklch(0.18 0.02 250);
+  --card: oklch(1 0 0 / 0.85);
+  --card-foreground: oklch(0.18 0.02 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 250);
+  --secondary: oklch(0.95 0.01 250);
+  --secondary-foreground: oklch(0.2 0.02 250);
+  --muted: oklch(0.95 0.01 250);
+  --muted-foreground: oklch(0.45 0.02 250);
+  --border: oklch(0.65 0.18 250 / 0.25);
+  --input: oklch(0.96 0.01 250);
+  --gradient-card: linear-gradient(160deg, oklch(1 0 0 / 0.9), oklch(0.96 0.01 250 / 0.85));
+  background-image:
+    radial-gradient(ellipse 80% 60% at 10% 0%, #1E66FF22, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 100% 100%, #00E5FF22, transparent 60%),
+    linear-gradient(180deg, #F4F8FF, #FFFFFF);
+}
+.landing-light h1, .landing-light h2, .landing-light h3, .landing-light .font-display {
+  text-shadow: 0 1px 12px #1E66FF22;
+}
+.landing-light .bg-card,
+.landing-light [class*="bg-gradient-card"] {
+  border-color: rgba(30, 102, 255, 0.18);
+}
