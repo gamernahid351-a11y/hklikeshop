@@ -57,18 +57,19 @@ function AdminSettings() {
 
   if (!s) return <div className="grid place-items-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary"/></div>;
 
-  async function uploadLogo(file: File) {
+  async function uploadImage(file: File, folder: string, field: keyof S) {
     setUploading(true);
     try {
       const ext = file.name.split(".").pop() || "png";
-      const path = `logo/${Date.now()}.${ext}`;
+      const path = `${folder}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type });
       if (error) throw error;
       const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-      setS((prev) => prev ? { ...prev, logo_url: data.publicUrl } : prev);
-      toast.success("Logo uploaded");
+      setS((prev) => prev ? { ...prev, [field]: data.publicUrl } as S : prev);
+      toast.success("Uploaded");
     } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
   }
+  const uploadLogo = (file: File) => uploadImage(file, "logo", "logo_url");
 
   return (
     <div className="space-y-5 max-w-2xl mx-auto">
