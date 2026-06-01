@@ -54,7 +54,7 @@ function Dashboard() {
   const heroSlides = slides.length > 0
     ? slides.map((s) => ({ id: s.id, title: s.title ?? "", image: s.image_url, link: s.link_url }))
     : [{ id: "hero", title: `Hi ${user?.email?.split("@")[0] ?? ""} 👋`, image: null, link: null }];
-  const tgHandle = tg.replace(/^@/, "");
+  
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-8">
