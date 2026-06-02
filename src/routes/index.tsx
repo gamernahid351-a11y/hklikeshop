@@ -235,7 +235,7 @@ function HeroCarousel({ slides }: { slides: { id: string; title: string; image: 
       ) : (
         <div className="absolute inset-0 bg-gradient-primary opacity-80" />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       {s.link && (
         <a href={s.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-10" aria-label={s.title || "slide link"} />
       )}
