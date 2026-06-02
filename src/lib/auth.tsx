@@ -14,67 +14,51 @@ type AuthCtx = {
 
 const Ctx = createContext<AuthCtx | null>(null);
 
+async function fetchIsAdmin(userId: string): Promise<boolean> {
+  try {
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+    return !!data?.some((r) => r.role === "admin");
+  } catch {
+    return false;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [roleChecked, setRoleChecked] = useState(false);
 
   useEffect(() => {
+    let active = true;
     const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
+      if (!active) return;
       setSession(sess);
       setUser(sess?.user ?? null);
       if (sess?.user) {
-        setRoleChecked(false);
-        setTimeout(async () => {
-          try {
-            const { data } = await supabase
-              .from("user_roles")
-              .select("role")
-              .eq("user_id", sess.user.id);
-            setIsAdmin(!!data?.some((r) => r.role === "admin"));
-          } catch {
-            setIsAdmin(false);
-          } finally {
-            setRoleChecked(true);
-            setLoading(false);
-          }
-        }, 0);
+        fetchIsAdmin(sess.user.id).then((admin) => {
+          if (!active) return;
+          setIsAdmin(admin);
+          setLoading(false);
+        });
       } else {
         setIsAdmin(false);
-        setRoleChecked(true);
         setLoading(false);
       }
     });
-
-    supabase.auth.getSession().then(async ({ data: { session: s } }) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      if (s?.user) {
-        try {
-          const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", s.user.id);
-          setIsAdmin(!!data?.some((r) => r.role === "admin"));
-        } catch {
-          setIsAdmin(false);
-        }
-        setRoleChecked(true);
-      } else {
-        setRoleChecked(true);
-      }
-      setLoading(false);
-    });
-
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const value: AuthCtx = {
     user,
     session,
-    loading: loading || (!!user && !roleChecked),
+    loading,
     isAdmin,
     signIn: async (email, password) => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });

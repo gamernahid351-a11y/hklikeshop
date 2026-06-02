@@ -37,13 +37,13 @@ export function SupportButton() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label="Support"
-        className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full grid place-items-center bg-gradient-primary text-primary-foreground shadow-[0_0_24px_rgba(30,102,255,0.55)] ring-2 ring-primary/40"
+        className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full grid place-items-center bg-gradient-primary text-primary-foreground shadow-[0_0_24px_rgba(30,102,255,0.55)] ring-2 ring-primary/40"
       >
         {open ? <X className="w-6 h-6" /> : <Headphones className="w-6 h-6" />}
       </button>
 
       {open && (
-        <div className="fixed bottom-44 right-4 z-50 flex flex-col items-end gap-2 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-24 right-5 z-50 flex flex-col items-end gap-3 animate-in fade-in slide-in-from-bottom-2">
           {items.length === 0 && (
             <div className="px-3 py-2 rounded-lg bg-card border border-border text-xs text-muted-foreground shadow-lg">
               No contacts configured
@@ -56,11 +56,12 @@ export function SupportButton() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 pl-3 pr-4 py-2 rounded-full text-white text-sm font-semibold shadow-lg"
+              aria-label={it.label}
+              title={it.label}
+              className="w-12 h-12 rounded-full grid place-items-center text-white shadow-lg ring-2 ring-white/40 hover:scale-110 transition"
               style={{ backgroundColor: it.color }}
             >
-              <it.icon className="w-4 h-4" />
-              {it.label}
+              <it.icon className="w-5 h-5" />
             </a>
           ))}
         </div>

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import { LandingNoticePopup } from "@/components/LandingNoticePopup";
+import { SupportButton } from "@/components/SupportButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -211,15 +212,7 @@ function Landing() {
         © {new Date().getFullYear()} GS STORE. For BD server only.
       </footer>
 
-      {/* Floating support */}
-      <Link
-        to="/auth"
-        aria-label="Support"
-        className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full grid place-items-center bg-gradient-primary text-primary-foreground shadow-glow ring-2 ring-primary/40 hover:scale-110 active:scale-95 transition"
-      >
-        <Headphones className="w-6 h-6" />
-        <span className="absolute inset-0 rounded-full animate-ping bg-primary/30 -z-10" />
-      </Link>
+      <SupportButton />
     </div>
   );
 }
@@ -242,7 +235,7 @@ function HeroCarousel({ slides }: { slides: { id: string; title: string; image: 
       ) : (
         <div className="absolute inset-0 bg-gradient-primary opacity-80" />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
       {s.link && (
         <a href={s.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-10" aria-label={s.title || "slide link"} />
       )}
