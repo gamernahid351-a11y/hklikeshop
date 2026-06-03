@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, FolderTree, Eye, KeyRound, Image as ImageIcon, Users } from "lucide-react";
+import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, Image as ImageIcon } from "lucide-react";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,6 @@ export function AppShell({ children, admin = false }: { children: ReactNode; adm
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { to: "/admin/slider", label: "Slider", icon: ImageIcon },
     { to: "/admin/orders", label: "Orders", icon: Inbox },
-    { to: "/admin/visit-orders", label: "Visits", icon: Eye },
-    { to: "/admin/guild", label: "Guild", icon: Users },
-    { to: "/admin/panels", label: "Panels", icon: KeyRound },
-    { to: "/admin/categories", label: "Cats", icon: FolderTree },
     { to: "/admin/packages", label: "Pkgs", icon: Pkg },
     { to: "/admin/settings", label: "Settings", icon: Settings },
   ];
