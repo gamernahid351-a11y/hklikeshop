@@ -29,9 +29,9 @@ export function AppShell({ children, admin = false }: { children: ReactNode; adm
       <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link to={admin ? "/admin" : "/dashboard"} className="flex items-center gap-2">
-            <img src={gsLogo} alt="GS STORE" className="w-8 h-8 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
+            <img src={gsLogo} alt="FF LIKES BD" className="w-8 h-8 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
             <div>
-              <div className="font-display font-bold text-sm leading-none">GS STORE</div>
+              <div className="font-display font-bold text-sm leading-none">FF LIKES <span className="text-primary">BD</span></div>
               {admin && <div className="text-[10px] text-accent leading-none mt-0.5 flex items-center gap-1"><ShieldCheck className="w-3 h-3"/>ADMIN</div>}
             </div>
           </Link>

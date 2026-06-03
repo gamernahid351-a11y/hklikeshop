@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import gsLogo from "@/assets/gs-logo.png";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Login • GS STORE" }] }),
+  head: () => ({ meta: [{ title: "Login • FF LIKES BD" }] }),
   component: AuthPage,
 });
 
@@ -58,8 +58,8 @@ function AuthPage() {
     <div className="min-h-screen bg-gradient-hero flex flex-col">
       <header className="px-5 py-4 max-w-6xl w-full mx-auto">
         <Link to="/" className="flex items-center gap-2 w-fit">
-          <img src={gsLogo} alt="GS STORE" className="w-9 h-9 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
-          <span className="font-display font-bold text-lg">GS STORE</span>
+          <img src={gsLogo} alt="FF LIKES BD" className="w-9 h-9 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
+          <span className="font-display font-bold text-lg">FF LIKES <span className="text-primary">BD</span></span>
         </Link>
       </header>
       <div className="flex-1 grid place-items-center px-5 py-8">
