@@ -32,22 +32,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  async function applySession(sess: Session | null) {
+    setSession(sess);
+    setUser(sess?.user ?? null);
+    setIsAdmin(sess?.user ? await fetchIsAdmin(sess.user.id) : false);
+    setLoading(false);
+  }
+
   useEffect(() => {
     let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      applySession(data.session);
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
       if (!active) return;
-      setSession(sess);
-      setUser(sess?.user ?? null);
-      if (sess?.user) {
-        fetchIsAdmin(sess.user.id).then((admin) => {
-          if (!active) return;
-          setIsAdmin(admin);
-          setLoading(false);
-        });
-      } else {
-        setIsAdmin(false);
-        setLoading(false);
-      }
+      applySession(sess);
     });
     return () => {
       active = false;
@@ -61,8 +61,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     isAdmin,
     signIn: async (email, password) => {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      await applySession(data.session);
     },
     signUp: async (email, password, fullName) => {
       const redirectUrl = `${window.location.origin}/dashboard`;
