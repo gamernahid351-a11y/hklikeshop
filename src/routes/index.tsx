@@ -1,14 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getLandingData } from "@/lib/landing.functions";
-import {
-  Flame, ShoppingCart, Settings as SettingsIcon, User as UserIcon,
-  ShieldCheck, Rocket, Headphones, Heart, Eye, KeyRound,
-  Volume2, VolumeX, ChevronLeft, ChevronRight, BadgeCheck, Tag, Sparkles, Users,
-} from "lucide-react";
+import { BadgeCheck, Clock, Heart, Menu, ShieldCheck, ShoppingCart, Star, ThumbsUp, User as UserIcon, Zap } from "lucide-react";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import { LandingNoticePopup } from "@/components/LandingNoticePopup";
 import { SupportButton } from "@/components/SupportButton";
@@ -16,10 +12,10 @@ import { SupportButton } from "@/components/SupportButton";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GS STORE — Free Fire BD Likes, Visits & Panels" },
-      { name: "description", content: "Buy Free Fire BD auto likes, profile visits and premium panels. Instant key delivery, secure bKash payment." },
-      { property: "og:title", content: "GS STORE" },
-      { property: "og:description", content: "Free Fire BD likes, visits & panels — instant delivery." },
+      { title: "FF Likes BD — Free Fire Like Service" },
+      { name: "description", content: "Buy Free Fire profile likes for Bangladesh server with safe, fast delivery and simple bKash payment." },
+      { property: "og:title", content: "FF Likes BD" },
+      { property: "og:description", content: "Free Fire profile like service for BD players." },
     ],
   }),
   component: Landing,
@@ -30,446 +26,180 @@ type Pkg = {
   name: string;
   description: string | null;
   price_bdt: number;
-  type: "like" | "visit";
-  image_url: string | null;
+  likes_per_day?: number | null;
+  duration_days?: number | null;
+  type: string;
 };
-type Panel = {
-  id: string;
-  name: string;
-  description: string | null;
-  price_bdt: number;
-  video_url: string | null;
-  image_url: string | null;
-  apk_link: string | null;
-  duration_label: string | null;
-  panel_category_id: string | null;
-};
-type PanelCat = { id: string; name: string };
-type GuildPkg = { id: string; name: string; description: string | null; price_bdt: number; image_url: string | null; duration_label: string | null; bot_count: number };
-type Slide = { id: string; image_url: string; link_url: string | null; title: string | null };
+
+type Notice = { enabled: boolean; imageUrl: string; telegramUrl: string; text: string };
 
 function Landing() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const [pkgs, setPkgs] = useState<Pkg[]>([]);
-  const [panels, setPanels] = useState<Panel[]>([]);
-  const [adminSlides, setAdminSlides] = useState<Slide[]>([]);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [levelUpUrl, setLevelUpUrl] = useState("https://gslevelup.lovable.app/");
-  const [guildPkgs, setGuildPkgs] = useState<GuildPkg[]>([]);
-  const [panelCats, setPanelCats] = useState<PanelCat[]>([]);
-  const [notice, setNotice] = useState<{ enabled: boolean; imageUrl: string; telegramUrl: string; text: string } | null>(null);
+  const [notice, setNotice] = useState<Notice | null>(null);
 
   useEffect(() => {
-    if (!loading && user) {
-      navigate({ to: isAdmin ? "/admin" : "/dashboard" });
-    }
+    if (!loading && user) navigate({ to: isAdmin ? "/admin" : "/dashboard" });
   }, [user, isAdmin, loading, navigate]);
 
   useEffect(() => {
-    (async () => {
-      const data = await getLandingData();
-      setPkgs(data.packages as Pkg[]);
-      setPanels(data.panels as Panel[]);
-      setAdminSlides(((data as any).slides ?? []) as Slide[]);
+    getLandingData().then((data) => {
+      setPkgs(((data as any).packages ?? []).filter((p: Pkg) => p.type === "like"));
       setLogoUrl(((data as any).logoUrl ?? null) as string | null);
-      if ((data as any).levelUpWebUrl) setLevelUpUrl((data as any).levelUpWebUrl);
-      setGuildPkgs(((data as any).guildPackages ?? []) as GuildPkg[]);
-      setPanelCats(((data as any).panelCategories ?? []) as PanelCat[]);
       if ((data as any).notice) setNotice((data as any).notice);
-    })();
+    });
   }, []);
 
-  const likes = pkgs.filter((p) => p.type === "like");
-  const visits = pkgs.filter((p) => p.type === "visit");
-
-  // Hero carousel slides — admin slides first, fallback to panels, then static
-  const heroSlides =
-    adminSlides.length > 0
-      ? adminSlides.map((s) => ({ id: s.id, title: s.title ?? "", image: s.image_url, video: null as string | null, link: s.link_url }))
-      : panels.length > 0
-        ? panels.slice(0, 5).map((p) => ({ id: p.id, title: p.name, image: p.image_url, video: p.video_url, link: null as string | null }))
-        : [{ id: "fallback", title: "Free Fire APKMOD & Panels", image: null as string | null, video: null as string | null, link: null as string | null }];
+  const minPrice = useMemo(() => {
+    const prices = pkgs.map((p) => Number(p.price_bdt)).filter(Boolean);
+    return prices.length ? Math.min(...prices) : 5;
+  }, [pkgs]);
 
   return (
-    <div className="landing-light min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
       <LandingNoticePopup notice={notice} />
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-card/70 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 min-w-0">
-            <img src={logoUrl || gsLogo} alt="GS STORE" className="w-9 h-9 rounded-lg object-cover ring-1 ring-primary/40" />
-            <div className="font-display font-bold text-base sm:text-lg truncate">GS STORE</div>
+      <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 min-w-0">
+            <img src={logoUrl || gsLogo} alt="FF Likes BD logo" className="w-10 h-10 rounded-lg object-cover ring-1 ring-border" />
+            <div className="font-display font-extrabold text-lg sm:text-xl leading-none">
+              FF LIKES <span className="text-primary">BD</span>
+            </div>
           </Link>
           <div className="flex items-center gap-2">
-            <a href={levelUpUrl} target="_blank" rel="noreferrer">
-              <Button size="sm" className="bg-gradient-primary text-primary-foreground h-9 px-3 rounded-lg">
-                <Sparkles className="w-3.5 h-3.5 mr-1" /> LEVEL UP WEB
-              </Button>
-            </a>
             <Link to="/auth">
-              <Button size="icon" className="bg-gradient-primary text-primary-foreground h-9 w-9 rounded-lg">
+              <Button size="icon" className="rounded-xl bg-gradient-primary text-primary-foreground" aria-label="Login">
                 <UserIcon className="w-4 h-4" />
               </Button>
             </Link>
-            <Link to="/auth">
-              <Button size="icon" variant="secondary" className="h-9 w-9 rounded-lg">
-                <SettingsIcon className="w-4 h-4" />
-              </Button>
-            </Link>
+            <Button size="icon" variant="ghost" className="rounded-xl" aria-label="Menu">
+              <Menu className="w-6 h-6" />
+            </Button>
           </div>
         </div>
       </header>
 
-      {/* Hero carousel */}
-      <section className="px-4 pt-4 max-w-6xl mx-auto">
-        <HeroCarousel slides={heroSlides} />
-      </section>
+      <main>
+        <section className="ff-grid-surface px-4 pt-20 pb-14 text-center">
+          <div className="max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs sm:text-sm font-bold text-primary shadow-card">
+              <span className="w-2 h-2 rounded-full bg-primary" /> #1 Trusted FF Likes Provider in BD
+            </div>
+            <h1 className="mt-8 font-display text-4xl sm:text-6xl font-extrabold leading-tight text-foreground">
+              Show Off your FF Profile <span className="text-primary">Like a Pro.</span>
+            </h1>
+            <p className="mt-6 max-w-2xl mx-auto text-lg sm:text-xl leading-8 text-muted-foreground">
+              Get instant player likes for your Free Fire profile. 100% safe, permanent, and fast delivery starting at just <b className="text-primary">৳{minPrice}</b>.
+            </p>
+            <div className="mt-8">
+              <Link to="/auth">
+                <Button size="lg" className="w-full sm:w-auto sm:min-w-80 h-14 rounded-2xl bg-gradient-primary text-primary-foreground text-base font-extrabold">
+                  <ShoppingCart className="w-5 h-5 mr-2" /> Buy Likes Now
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
 
-      {/* Our Products */}
-      <section className="px-4 mt-8 max-w-6xl mx-auto">
-        <h2 className="text-center font-display font-extrabold text-2xl sm:text-3xl">
-          <span className="text-foreground">Our </span>
-          <span className="text-gradient">Products</span>
-        </h2>
-        <div className="mx-auto mt-2 h-[2px] w-24 bg-gradient-primary rounded-full" />
-      </section>
+        <section className="px-4 py-10 border-y border-border bg-card/55">
+          <div className="max-w-4xl mx-auto grid grid-cols-3 gap-3 text-center">
+            <Stat value="50K+" label="Orders" />
+            <Stat value="100%" label="Safe" />
+            <Stat value="24H" label="Delivery" />
+          </div>
+        </section>
 
-      {/* Likes section */}
-      {likes.length > 0 && (
-        <ProductSection title="LIKES PACKAGES" icon={Heart}>
-          {likes.map((p) => (
-            <PackageCard key={p.id} pkg={p} />
-          ))}
-        </ProductSection>
-      )}
+        <section className="px-4 py-12 max-w-5xl mx-auto">
+          <div className="text-center mb-7">
+            <h2 className="font-display font-extrabold text-2xl sm:text-3xl">LIKE PACKAGES</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Package select korun, UID din, payment submit korun.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pkgs.map((pkg) => <LikePackageCard key={pkg.id} pkg={pkg} />)}
+            {pkgs.length === 0 && (
+              <Card className="sm:col-span-2 lg:col-span-3 border-border bg-gradient-card p-6 text-center text-sm text-muted-foreground">
+                Like package ekhono add kora hoyni.
+              </Card>
+            )}
+          </div>
+        </section>
 
-      {/* Visits section */}
-      {visits.length > 0 && (
-        <ProductSection title="VISITS PACKAGES" icon={Eye}>
-          {visits.map((p) => (
-            <PackageCard key={p.id} pkg={p} />
-          ))}
-        </ProductSection>
-      )}
+        <section className="px-4 pb-14 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-3 gap-4">
+            <Feature icon={ShieldCheck} title="Safe Service" text="UID chara kono login details lage na." />
+            <Feature icon={Zap} title="Fast Start" text="Payment verify hole order quick start hoy." />
+            <Feature icon={Clock} title="Daily Likes" text="Package duration onujayi likes delivery cholbe." />
+          </div>
+        </section>
+      </main>
 
-      {/* Panels section */}
-      {panels.length > 0 && (
-        <PanelsByCategory panels={panels} categories={panelCats} />
-      )}
-
-      {/* Guild bots */}
-      {guildPkgs.length > 0 && (
-        <ProductSection title="GUILD BOTS" icon={Users}>
-          {guildPkgs.map((g) => (
-            <GuildPkgCard key={g.id} pkg={g} />
-          ))}
-        </ProductSection>
-      )}
-
-      {/* Why choose us */}
-      <section className="px-4 mt-12 max-w-6xl mx-auto">
-        <h2 className="text-center font-display font-extrabold text-2xl sm:text-3xl">
-          WHY CHOOSE <span className="text-gradient">US?</span>
-        </h2>
-        <p className="text-center text-sm text-muted-foreground mt-2 max-w-md mx-auto">
-          Trusted by thousands of gamers in BD for premium quality and instant delivery
-        </p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {[
-            { icon: Rocket, t: "INSTANT DELIVERY", d: "Approve hole sathe sathe key/likes/visits delivery" },
-            { icon: ShieldCheck, t: "100% SECURE", d: "BD server only — secure API + verified payments" },
-            { icon: Headphones, t: "24/7 SUPPORT", d: "Telegram support — jokhon dorkar tokhon ami achi" },
-            { icon: BadgeCheck, t: "VERIFIED PANELS", d: "Pati panel verified, latest APK link instant" },
-            { icon: Tag, t: "BEST PRICE", d: "Bangladesh er shobcheye komor daam" },
-            { icon: Sparkles, t: "DAILY DELIVERY", d: "Likes packages prati 24h por auto delivery" },
-          ].map((f) => (
-            <Card key={f.t} className="bg-gradient-card border-border p-5 text-center">
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-primary grid place-items-center shadow-glow mb-3">
-                <f.icon className="w-7 h-7 text-primary-foreground" />
-              </div>
-              <div className="font-display font-bold text-sm mb-1">{f.t}</div>
-              <div className="text-xs text-muted-foreground">{f.d}</div>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="px-4 mt-12 max-w-3xl mx-auto">
-        <Card className="bg-gradient-card border-border p-6 text-center">
-          <div className="font-display font-bold text-xl mb-2">Ready to boost your account?</div>
-          <p className="text-sm text-muted-foreground mb-4">Login kore order korun — pati 24h instant delivery</p>
-          <Link to="/auth">
-            <Button size="lg" className="bg-gradient-primary text-primary-foreground font-semibold">
-              <Flame className="w-4 h-4 mr-2" /> Get Started
-            </Button>
-          </Link>
-        </Card>
-      </section>
-
-      <footer className="px-4 py-8 mt-12 text-center text-xs text-muted-foreground border-t border-border">
-        © {new Date().getFullYear()} GS STORE. For BD server only.
+      <footer className="px-4 py-7 text-center text-xs text-muted-foreground border-t border-border bg-card/60">
+        © {new Date().getFullYear()} FF LIKES BD. Free Fire like service only.
       </footer>
-
       <SupportButton />
     </div>
   );
 }
 
-function HeroCarousel({ slides }: { slides: { id: string; title: string; image: string | null; video: string | null; link?: string | null }[] }) {
-  const [idx, setIdx] = useState(0);
-  const [muted, setMuted] = useState(true);
-  useEffect(() => {
-    if (slides.length <= 1) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 5000);
-    return () => clearInterval(t);
-  }, [slides.length]);
-  const s = slides[idx];
+function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="relative aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden border border-border bg-gradient-card shadow-card">
-      {s.video ? (
-        <video src={s.video} poster={s.image ?? undefined} autoPlay loop playsInline muted={muted} className="absolute inset-0 w-full h-full object-cover" />
-      ) : s.image ? (
-        <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-primary opacity-80" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-      {s.link && (
-        <a href={s.link} target="_blank" rel="noopener noreferrer" className="absolute inset-0 z-10" aria-label={s.title || "slide link"} />
-      )}
-      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
-        <div className="font-display font-extrabold text-lg sm:text-2xl text-gradient">{s.title}</div>
-        <Link to="/auth">
-          <Button size="sm" className="mt-2 bg-gradient-primary text-primary-foreground font-semibold">
-            <ShoppingCart className="w-4 h-4 mr-1.5" /> Buy Now
-          </Button>
-        </Link>
-      </div>
-      {s.video && (
-        <button
-          type="button"
-          onClick={() => setMuted((m) => !m)}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 backdrop-blur grid place-items-center text-white"
-          aria-label={muted ? "Unmute" : "Mute"}
-        >
-          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
-      )}
-      {slides.length > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={() => setIdx((i) => (i - 1 + slides.length) % slides.length)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur grid place-items-center text-white hover:bg-black/70"
-            aria-label="Previous"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setIdx((i) => (i + 1) % slides.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur grid place-items-center text-white hover:bg-black/70"
-            aria-label="Next"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setIdx(i)}
-                className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-primary" : "w-1.5 bg-white/40"}`}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
-        </>
-      )}
+    <div>
+      <div className="font-display text-3xl sm:text-4xl font-extrabold text-primary">{value}</div>
+      <div className="mt-1 text-xs font-semibold text-muted-foreground uppercase tracking-widest">{label}</div>
     </div>
   );
 }
 
-function ProductSection({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) {
+function LikePackageCard({ pkg }: { pkg: Pkg }) {
   return (
-    <section className="px-4 mt-8 max-w-6xl mx-auto">
-      <div className="flex items-center gap-3 my-5">
-        <div className="flex-1 h-px bg-border" />
-        <div className="flex items-center gap-2 font-display font-bold text-sm tracking-[0.2em] text-foreground">
-          <Icon className="w-4 h-4 text-primary" /> {title}
-        </div>
-        <div className="flex-1 h-px bg-border" />
-      </div>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">{children}</div>
-    </section>
-  );
-}
-
-function PackageCard({ pkg }: { pkg: Pkg }) {
-  const Icon = pkg.type === "visit" ? Eye : Heart;
-  return (
-    <Card className="bg-gradient-card border-border overflow-hidden shadow-card flex flex-col">
-      <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border/60">
-        <div className="w-7 h-7 rounded-md bg-primary/15 grid place-items-center">
-          <Icon className="w-4 h-4 text-primary" />
+    <Card className="border-border bg-gradient-card p-5 shadow-card flex flex-col gap-4">
+      <div className="flex items-start gap-3">
+        <div className="w-11 h-11 rounded-2xl bg-primary/10 grid place-items-center shrink-0">
+          <ThumbsUp className="w-6 h-6 text-primary" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="font-display font-bold text-xs sm:text-sm truncate">{pkg.name}</div>
-          <div className="text-[10px] text-success flex items-center gap-1"><BadgeCheck className="w-3 h-3" /> Verified</div>
+          <div className="font-display font-extrabold text-base leading-tight">{pkg.name}</div>
+          <div className="mt-1 text-xs text-success flex items-center gap-1"><BadgeCheck className="w-3 h-3" /> Verified like package</div>
         </div>
       </div>
-      <div className="aspect-video bg-secondary/30 overflow-hidden">
-        {pkg.image_url ? (
-          <img src={pkg.image_url} alt={pkg.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full grid place-items-center bg-gradient-primary/10">
-            <Icon className="w-10 h-10 text-primary/60" />
-          </div>
-        )}
-      </div>
-      <div className="p-3 flex-1 flex flex-col gap-2">
-        {pkg.description && <div className="text-[11px] text-muted-foreground line-clamp-2">{pkg.description}</div>}
-        <div className="mt-auto">
-          <div className="flex items-center gap-1 text-success font-bold text-sm mb-2">
-            <Tag className="w-4 h-4" /> From ৳{Number(pkg.price_bdt)}
-          </div>
-          <Link to="/auth">
-            <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground font-semibold">
-              <ShoppingCart className="w-3.5 h-3.5 mr-1" /> Buy
-            </Button>
-          </Link>
+      <p className="text-sm leading-6 text-muted-foreground min-h-12">
+        {pkg.description || "Free Fire profile e daily likes delivery. BD server er jonno safe auto like package."}
+      </p>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="rounded-xl bg-secondary p-3">
+          <div className="text-muted-foreground">Likes/day</div>
+          <div className="font-bold text-foreground">{pkg.likes_per_day || "Auto"}</div>
         </div>
+        <div className="rounded-xl bg-secondary p-3">
+          <div className="text-muted-foreground">Duration</div>
+          <div className="font-bold text-foreground">{pkg.duration_days ? `${pkg.duration_days} days` : "Package"}</div>
+        </div>
+      </div>
+      <div className="mt-auto flex items-center justify-between gap-3">
+        <div>
+          <div className="text-xs text-muted-foreground">Price</div>
+          <div className="font-display text-2xl font-extrabold text-primary">৳{Number(pkg.price_bdt)}</div>
+        </div>
+        <Link to="/auth">
+          <Button className="rounded-xl bg-gradient-primary text-primary-foreground font-bold">
+            <Heart className="w-4 h-4 mr-1.5" /> Buy
+          </Button>
+        </Link>
       </div>
     </Card>
   );
 }
 
-function PanelsByCategory({ panels, categories }: { panels: Panel[]; categories: PanelCat[] }) {
-  const grouped = categories
-    .map((c) => ({ cat: c, items: panels.filter((p) => p.panel_category_id === c.id) }))
-    .filter((g) => g.items.length > 0);
-  const uncategorized = panels.filter((p) => !p.panel_category_id);
+function Feature({ icon: Icon, title, text }: { icon: any; title: string; text: string }) {
   return (
-    <ProductSection title="PANELS" icon={KeyRound}>
-      {grouped.map((g) => (
-        <div key={g.cat.id} className="col-span-2 lg:col-span-3">
-          <div className="text-xs font-display font-bold tracking-widest text-primary mb-2 mt-1">{g.cat.name.toUpperCase()}</div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {g.items.map((p) => <PanelCard key={p.id} panel={p} />)}
-          </div>
-        </div>
-      ))}
-      {uncategorized.length > 0 && (
-        <div className="col-span-2 lg:col-span-3">
-          {grouped.length > 0 && <div className="text-xs font-display font-bold tracking-widest text-muted-foreground mb-2 mt-1">OTHERS</div>}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {uncategorized.map((p) => <PanelCard key={p.id} panel={p} />)}
-          </div>
-        </div>
-      )}
-    </ProductSection>
-  );
-}
-
-function GuildPkgCard({ pkg }: { pkg: GuildPkg }) {
-  return (
-    <Card className="bg-gradient-card border-border overflow-hidden shadow-card flex flex-col">
-      <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border/60">
-        <div className="w-7 h-7 rounded-md bg-primary/15 grid place-items-center">
-          <Users className="w-4 h-4 text-primary" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="font-display font-bold text-xs sm:text-sm truncate">{pkg.name}</div>
-          <div className="text-[10px] text-success flex items-center gap-1"><BadgeCheck className="w-3 h-3" /> {pkg.bot_count} bot{pkg.bot_count > 1 ? "s" : ""}</div>
-        </div>
+    <Card className="border-border bg-gradient-card p-5 text-center shadow-card">
+      <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 grid place-items-center mb-3">
+        <Icon className="w-6 h-6 text-primary" />
       </div>
-      <div className="aspect-video bg-secondary/30 overflow-hidden">
-        {pkg.image_url ? (
-          <img src={pkg.image_url} alt={pkg.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full grid place-items-center bg-gradient-primary/10">
-            <Users className="w-10 h-10 text-primary/60" />
-          </div>
-        )}
-      </div>
-      <div className="p-3 flex-1 flex flex-col gap-2">
-        {pkg.description && <div className="text-[11px] text-muted-foreground line-clamp-2">{pkg.description}</div>}
-        {pkg.duration_label && <div className="text-[10px] text-muted-foreground">⏱ {pkg.duration_label}</div>}
-        <div className="mt-auto">
-          <div className="flex items-center gap-1 text-success font-bold text-sm mb-2">
-            <Tag className="w-4 h-4" /> ৳{Number(pkg.price_bdt)}
-          </div>
-          <Link to="/auth">
-            <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground font-semibold">
-              <ShoppingCart className="w-3.5 h-3.5 mr-1" /> Buy
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function PanelCard({ panel }: { panel: Panel }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(true);
-  return (
-    <Card className="bg-gradient-card border-border overflow-hidden shadow-card flex flex-col">
-      <div className="px-3 py-2.5 flex items-center gap-2 border-b border-border/60">
-        <div className="w-7 h-7 rounded-md bg-accent/15 grid place-items-center">
-          <KeyRound className="w-4 h-4 text-accent" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="font-display font-bold text-xs sm:text-sm truncate">{panel.name}</div>
-          <div className="text-[10px] text-success flex items-center gap-1"><BadgeCheck className="w-3 h-3" /> Verified</div>
-        </div>
-      </div>
-      <div className="relative aspect-video bg-secondary/30 overflow-hidden">
-        {panel.video_url ? (
-          <>
-            <video
-              ref={ref}
-              src={panel.video_url}
-              poster={panel.image_url ?? undefined}
-              muted={muted}
-              loop
-              playsInline
-              autoPlay
-              className="w-full h-full object-cover"
-            />
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setMuted((m) => !m); }}
-              className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/60 backdrop-blur grid place-items-center text-white"
-              aria-label={muted ? "Unmute" : "Mute"}
-            >
-              {muted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-            </button>
-          </>
-        ) : panel.image_url ? (
-          <img src={panel.image_url} alt={panel.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full grid place-items-center bg-gradient-primary/10">
-            <KeyRound className="w-10 h-10 text-accent/60" />
-          </div>
-        )}
-      </div>
-      <div className="p-3 flex-1 flex flex-col gap-2">
-        {panel.description && <div className="text-[11px] text-muted-foreground line-clamp-2">{panel.description}</div>}
-        {panel.duration_label && <div className="text-[10px] text-muted-foreground">⏱ {panel.duration_label}</div>}
-        <div className="mt-auto">
-          <div className="flex items-center gap-1 text-success font-bold text-sm mb-2">
-            <Tag className="w-4 h-4" /> From ৳{Number(panel.price_bdt)}
-          </div>
-          <Link to="/auth">
-            <Button size="sm" className="w-full bg-gradient-primary text-primary-foreground font-semibold">
-              <ShoppingCart className="w-3.5 h-3.5 mr-1" /> Buy
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <div className="font-display font-bold text-sm">{title}</div>
+      <div className="mt-1 text-xs leading-5 text-muted-foreground">{text}</div>
     </Card>
   );
 }
