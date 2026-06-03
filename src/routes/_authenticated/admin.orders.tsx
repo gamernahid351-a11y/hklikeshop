@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, CheckCircle2, XCircle, Loader2, Image as ImageIcon, Heart, Crown, Send } from "lucide-react";
+import { CheckCircle2, Eye, Heart, Image as ImageIcon, Loader2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/orders")({
@@ -22,16 +22,10 @@ type Order = {
   trx_id: string;
   payment_screenshot_url: string | null;
   status: "pending" | "approved" | "rejected" | "completed";
-  type: "like" | "visit" | "levelup";
-  delivered_username: string | null;
-  delivered_password: string | null;
-  delivered_bot_name: string | null;
-  delivered_at: string | null;
   likes_per_day: number;
   duration_days: number;
   days_completed: number;
   total_likes_sent: number;
-  next_run_at: string | null;
   created_at: string;
   rejection_reason: string | null;
   packages: { name: string; price_bdt: number } | null;
@@ -42,23 +36,18 @@ function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"pending" | "approved" | "rejected" | "completed" | "all">("pending");
-  const [kind, setKind] = useState<"like" | "levelup">("like");
   const [view, setView] = useState<Order | null>(null);
   const [shotUrl, setShotUrl] = useState<string | null>(null);
   const [reject, setReject] = useState<Order | null>(null);
   const [reason, setReason] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [deliver, setDeliver] = useState<Order | null>(null);
-  const [delivU, setDelivU] = useState("");
-  const [delivP, setDelivP] = useState("");
-  const [delivBot, setDelivBot] = useState("");
 
   async function load() {
     setLoading(true);
     const { data } = await supabase
       .from("orders")
-      .select("*, packages(name,price_bdt)")
-      .eq("type", kind)
+      .select("id,user_id,ff_uid,trx_id,payment_screenshot_url,status,likes_per_day,duration_days,days_completed,total_likes_sent,created_at,rejection_reason,packages(name,price_bdt)")
+      .eq("type", "like")
       .order("created_at", { ascending: false });
     const list = (data ?? []) as unknown as Order[];
     if (list.length) {
@@ -71,7 +60,7 @@ function AdminOrders() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [kind]);
+  useEffect(() => { load(); }, []);
 
   async function openShot(o: Order) {
     setView(o);
@@ -101,26 +90,6 @@ function AdminOrders() {
     }
   }
 
-  async function doDeliver() {
-    if (!deliver) return;
-    if (!delivU.trim() || !delivP.trim() || !delivBot.trim()) return toast.error("Bot name, Username & Password din");
-    setBusyId(deliver.id);
-    try {
-      const { error } = await supabase.from("orders").update({
-        status: "completed",
-        approved_at: new Date().toISOString(),
-        delivered_username: delivU.trim(),
-        delivered_password: delivP.trim(),
-        delivered_bot_name: delivBot.trim(),
-        delivered_at: new Date().toISOString(),
-      } as any).eq("id", deliver.id);
-      if (error) throw error;
-      toast.success("Delivered!");
-      setDeliver(null); setDelivU(""); setDelivP(""); setDelivBot("");
-      await load();
-    } catch (e: any) { toast.error(e.message); } finally { setBusyId(null); }
-  }
-
   async function doReject() {
     if (!reject) return;
     setBusyId(reject.id);
@@ -143,16 +112,9 @@ function AdminOrders() {
   return (
     <div className="space-y-5 max-w-4xl mx-auto">
       <div className="flex items-center gap-2">
-        {kind === "levelup" ? <Crown className="w-5 h-5 text-primary" /> : <Heart className="w-5 h-5 text-primary" />}
-        <h1 className="font-display font-bold text-2xl">{kind === "levelup" ? "LEVEL UP BOT Orders" : "Like Orders"}</h1>
+        <Heart className="w-5 h-5 text-primary" />
+        <h1 className="font-display font-bold text-2xl">Like Orders</h1>
       </div>
-
-      <Tabs value={kind} onValueChange={(v) => setKind(v as any)}>
-        <TabsList className="grid grid-cols-2 w-full">
-          <TabsTrigger value="like" className="gap-1.5"><Heart className="w-4 h-4"/>Likes</TabsTrigger>
-          <TabsTrigger value="levelup" className="gap-1.5"><Crown className="w-4 h-4"/>LEVEL UP BOT</TabsTrigger>
-        </TabsList>
-      </Tabs>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
         <TabsList className="grid grid-cols-5 w-full">
@@ -163,15 +125,13 @@ function AdminOrders() {
           <TabsTrigger value="all">All</TabsTrigger>
         </TabsList>
         <TabsContent value={tab} className="space-y-3 mt-4">
-          {loading && <div className="text-center py-8"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary"/></div>}
-          {!loading && filtered.length === 0 && (
-            <Card className="bg-gradient-card border-border p-8 text-center text-muted-foreground">No orders here.</Card>
-          )}
+          {loading && <div className="text-center py-8"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div>}
+          {!loading && filtered.length === 0 && <Card className="bg-gradient-card border-border p-8 text-center text-muted-foreground">No like orders here.</Card>}
           {filtered.map((o) => (
-            <Card key={o.id} className="bg-gradient-card border-border p-4 space-y-3">
+            <Card key={o.id} className="bg-gradient-card border-border p-4 space-y-3 shadow-card">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="font-mono font-bold">{o.ff_uid ?? (kind === "levelup" ? "—" : "?")}</div>
+                  <div className="font-mono font-bold">{o.ff_uid ?? "—"}</div>
                   <div className="text-xs text-muted-foreground truncate">{o.user_email ?? "—"}</div>
                 </div>
                 <Badge variant="outline" className="capitalize">{o.status}</Badge>
@@ -179,24 +139,17 @@ function AdminOrders() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div><span className="text-muted-foreground">Pack:</span> {o.packages?.name} (৳{o.packages ? Number(o.packages.price_bdt) : "?"})</div>
                 <div><span className="text-muted-foreground">TrxID:</span> <span className="font-mono">{o.trx_id}</span></div>
-                {kind === "like" && <div><span className="text-muted-foreground">Plan:</span> {o.likes_per_day}/day × {o.duration_days}d</div>}
-                {kind === "like" && <div><span className="text-muted-foreground">Sent:</span> {o.total_likes_sent} likes ({o.days_completed}/{o.duration_days})</div>}
-                {kind === "levelup" && o.delivered_username && <div className="col-span-2"><span className="text-muted-foreground">Username:</span> <span className="font-mono">{o.delivered_username}</span></div>}
+                <div><span className="text-muted-foreground">Plan:</span> {o.likes_per_day}/day × {o.duration_days}d</div>
+                <div><span className="text-muted-foreground">Sent:</span> {o.total_likes_sent} likes ({o.days_completed}/{o.duration_days})</div>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => openShot(o)}><Eye className="w-3.5 h-3.5 mr-1"/>View proof</Button>
+                <Button size="sm" variant="outline" onClick={() => openShot(o)}><Eye className="w-3.5 h-3.5 mr-1" />View proof</Button>
                 {o.status === "pending" && (
                   <>
-                    {kind === "levelup" ? (
-                      <Button size="sm" onClick={() => { setDeliver(o); setDelivU(""); setDelivP(""); setDelivBot(""); }} className="bg-success text-success-foreground hover:bg-success/90">
-                        <Send className="w-3.5 h-3.5 mr-1"/>Deliver creds
-                      </Button>
-                    ) : (
-                      <Button size="sm" disabled={busyId === o.id} onClick={() => approve(o)} className="bg-success text-success-foreground hover:bg-success/90">
-                        {busyId === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin"/> : <><CheckCircle2 className="w-3.5 h-3.5 mr-1"/>Approve</>}
-                      </Button>
-                    )}
-                    <Button size="sm" variant="destructive" onClick={() => setReject(o)}><XCircle className="w-3.5 h-3.5 mr-1"/>Reject</Button>
+                    <Button size="sm" disabled={busyId === o.id} onClick={() => approve(o)} className="bg-success text-success-foreground hover:bg-success/90">
+                      {busyId === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><CheckCircle2 className="w-3.5 h-3.5 mr-1" />Approve</>}
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => setReject(o)}><XCircle className="w-3.5 h-3.5 mr-1" />Reject</Button>
                   </>
                 )}
               </div>
@@ -217,9 +170,9 @@ function AdminOrders() {
             </div>
             <div className="text-xs text-muted-foreground">Payment screenshot</div>
             <div className="rounded-md border border-border bg-background min-h-[180px] grid place-items-center overflow-hidden">
-              {!view?.payment_screenshot_url && <ImageIcon className="w-8 h-8 text-muted-foreground"/>}
-              {view?.payment_screenshot_url && !shotUrl && <Loader2 className="w-5 h-5 animate-spin text-muted-foreground"/>}
-              {shotUrl && <img src={shotUrl} alt="screenshot" className="w-full max-h-[400px] object-contain"/>}
+              {!view?.payment_screenshot_url && <ImageIcon className="w-8 h-8 text-muted-foreground" />}
+              {view?.payment_screenshot_url && !shotUrl && <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />}
+              {shotUrl && <img src={shotUrl} alt="Payment screenshot" className="w-full max-h-[400px] object-contain" />}
             </div>
           </div>
         </DialogContent>
@@ -232,38 +185,7 @@ function AdminOrders() {
           <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. Invalid TrxID" />
           <DialogFooter>
             <Button variant="ghost" onClick={() => setReject(null)}>Cancel</Button>
-            <Button variant="destructive" disabled={busyId === reject?.id} onClick={doReject}>
-              {busyId === reject?.id ? <Loader2 className="w-4 h-4 animate-spin"/> : "Reject"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!deliver} onOpenChange={(o) => !o && setDeliver(null)}>
-        <DialogContent className="bg-card border-border">
-          <DialogHeader><DialogTitle>Deliver LEVEL UP BOT credentials</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div className="text-xs text-muted-foreground">
-              Order #{deliver?.id.slice(0,8)} • {deliver?.user_email}
-            </div>
-            <div>
-              <Label>Bot Name</Label>
-              <Input value={delivBot} onChange={(e) => setDelivBot(e.target.value)} placeholder="e.g. ProBot42" />
-            </div>
-            <div>
-              <Label>Username</Label>
-              <Input value={delivU} onChange={(e) => setDelivU(e.target.value)} placeholder="e.g. user_42" />
-            </div>
-            <div>
-              <Label>Password</Label>
-              <Input value={delivP} onChange={(e) => setDelivP(e.target.value)} placeholder="Account password" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeliver(null)}>Cancel</Button>
-            <Button disabled={busyId === deliver?.id} onClick={doDeliver} className="bg-success text-success-foreground">
-              {busyId === deliver?.id ? <Loader2 className="w-4 h-4 animate-spin"/> : <><Send className="w-4 h-4 mr-1"/>Deliver</>}
-            </Button>
+            <Button variant="destructive" disabled={busyId === reject?.id} onClick={doReject}>{busyId === reject?.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Reject"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
