@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -13,8 +13,14 @@ import { toast } from "sonner";
 import { BkashPaymentBox } from "@/components/BkashPaymentBox";
 
 export const Route = createFileRoute("/_authenticated/dashboard/coupons")({
-  component: CouponsPage,
+  component: RedirectToLikePackages,
 });
+
+function RedirectToLikePackages() {
+  const navigate = useNavigate();
+  useEffect(() => { navigate({ to: "/dashboard/packages", replace: true }); }, [navigate]);
+  return null;
+}
 
 type CType = "like" | "visit" | "panel";
 type Settings = {

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
@@ -18,8 +18,14 @@ import settingsGuide from "@/assets/guild-settings-guide.png";
 import { BkashPaymentBox } from "@/components/BkashPaymentBox";
 
 export const Route = createFileRoute("/_authenticated/dashboard/guild")({
-  component: GuildPage,
+  component: RedirectToLikePackages,
 });
+
+function RedirectToLikePackages() {
+  const navigate = useNavigate();
+  useEffect(() => { navigate({ to: "/dashboard/packages", replace: true }); }, [navigate]);
+  return null;
+}
 
 type GPkg = { id: string; name: string; price_bdt: number; duration_label: string | null; bot_count: number; image_url: string | null; description: string | null; category: string };
 type GOrder = {

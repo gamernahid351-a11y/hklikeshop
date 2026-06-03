@@ -13,8 +13,14 @@ import { toast } from "sonner";
 import { BkashPaymentBox } from "@/components/BkashPaymentBox";
 
 export const Route = createFileRoute("/_authenticated/dashboard/panels")({
-  component: PanelsPage,
+  component: RedirectToLikePackages,
 });
+
+function RedirectToLikePackages() {
+  const navigate = useNavigate();
+  useEffect(() => { navigate({ to: "/dashboard/packages", replace: true }); }, [navigate]);
+  return null;
+}
 
 type Panel = {
   id: string;
