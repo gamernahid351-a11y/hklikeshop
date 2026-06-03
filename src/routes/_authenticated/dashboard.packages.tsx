@@ -24,7 +24,7 @@ type Pkg = {
   likes_per_day: number;
   duration_days: number;
   price_bdt: number;
-  type: "like" | "visit" | "levelup";
+  type: string;
   sort_order: number;
 };
 

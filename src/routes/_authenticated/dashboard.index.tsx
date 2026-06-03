@@ -18,7 +18,7 @@ type Pkg = {
   price_bdt: number;
   likes_per_day: number | null;
   duration_days: number | null;
-  type: "like" | "visit" | "levelup";
+  type: string;
 };
 
 function Dashboard() {
