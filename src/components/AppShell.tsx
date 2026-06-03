@@ -1,31 +1,18 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, FolderTree, Eye, UserCircle2, KeyRound, Image as ImageIcon, ExternalLink, Users } from "lucide-react";
+import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, FolderTree, Eye, KeyRound, Image as ImageIcon, Users } from "lucide-react";
 import gsLogo from "@/assets/gs-shop-logo.png";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, type ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
-const FALLBACK_LEVEL_UP_URL = "https://gslevelup.lovable.app/";
+import type { ReactNode } from "react";
 
 export function AppShell({ children, admin = false }: { children: ReactNode; admin?: boolean }) {
   const { signOut, user } = useAuth();
   const loc = useLocation();
   const navigate = useNavigate();
-  const [levelUpUrl, setLevelUpUrl] = useState(FALLBACK_LEVEL_UP_URL);
-
-  useEffect(() => {
-    supabase.from("app_settings").select("level_up_web_url").eq("id", 1).maybeSingle().then(({ data }) => {
-      const u = (data as any)?.level_up_web_url;
-      if (u) setLevelUpUrl(u);
-    });
-  }, []);
 
   const userNav = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/dashboard/packages", label: "Packages", icon: Pkg },
-    { to: "/dashboard/panels", label: "Panels", icon: KeyRound },
-    { to: "/dashboard/guild", label: "Guild", icon: Users },
     { to: "/dashboard/orders", label: "Orders", icon: ShoppingCart },
   ];
   const adminNav = [
@@ -53,11 +40,6 @@ export function AppShell({ children, admin = false }: { children: ReactNode; adm
             </div>
           </Link>
           <div className="flex items-center gap-2">
-            <a href={levelUpUrl} target="_blank" rel="noreferrer">
-              <Button size="sm" variant="default" className="h-8 gap-1 bg-gradient-primary text-primary-foreground">
-                <ExternalLink className="w-3.5 h-3.5" /> LEVEL UP
-              </Button>
-            </a>
             <span className="hidden sm:block text-xs text-muted-foreground truncate max-w-[160px]">{user?.email}</span>
             <Button size="sm" variant="ghost" onClick={async () => { await signOut(); navigate({ to: "/" }); }}>
               <LogOut className="w-4 h-4" />
