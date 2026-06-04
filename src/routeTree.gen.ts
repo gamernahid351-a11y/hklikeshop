@@ -18,11 +18,13 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicCronLikesRouteImport } from './routes/api/public/cron-likes'
+import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardPanelsRouteImport } from './routes/_authenticated/dashboard.panels'
 import { Route as AuthenticatedDashboardPackagesRouteImport } from './routes/_authenticated/dashboard.packages'
 import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
 import { Route as AuthenticatedDashboardGuildRouteImport } from './routes/_authenticated/dashboard.guild'
+import { Route as AuthenticatedDashboardDepositRouteImport } from './routes/_authenticated/dashboard.deposit'
 import { Route as AuthenticatedDashboardCouponsRouteImport } from './routes/_authenticated/dashboard.coupons'
 import { Route as AuthenticatedAdminVisitOrdersRouteImport } from './routes/_authenticated/admin.visit-orders'
 import { Route as AuthenticatedAdminSliderRouteImport } from './routes/_authenticated/admin.slider'
@@ -31,6 +33,7 @@ import { Route as AuthenticatedAdminPanelsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminPackagesRouteImport } from './routes/_authenticated/admin.packages'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminGuildRouteImport } from './routes/_authenticated/admin.guild'
+import { Route as AuthenticatedAdminDepositsRouteImport } from './routes/_authenticated/admin.deposits'
 import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin.coupons'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 
@@ -79,6 +82,12 @@ const ApiPublicCronLikesRoute = ApiPublicCronLikesRouteImport.update({
   path: '/api/public/cron-likes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardWalletRoute =
+  AuthenticatedDashboardWalletRouteImport.update({
+    id: '/wallet',
+    path: '/wallet',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardProfileRoute =
   AuthenticatedDashboardProfileRouteImport.update({
     id: '/profile',
@@ -107,6 +116,12 @@ const AuthenticatedDashboardGuildRoute =
   AuthenticatedDashboardGuildRouteImport.update({
     id: '/guild',
     path: '/guild',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardDepositRoute =
+  AuthenticatedDashboardDepositRouteImport.update({
+    id: '/deposit',
+    path: '/deposit',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardCouponsRoute =
@@ -156,6 +171,12 @@ const AuthenticatedAdminGuildRoute = AuthenticatedAdminGuildRouteImport.update({
   path: '/guild',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminDepositsRoute =
+  AuthenticatedAdminDepositsRouteImport.update({
+    id: '/deposits',
+    path: '/deposits',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCouponsRoute =
   AuthenticatedAdminCouponsRouteImport.update({
     id: '/coupons',
@@ -177,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/api/dispatch': typeof ApiDispatchRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/admin/deposits': typeof AuthenticatedAdminDepositsRoute
   '/admin/guild': typeof AuthenticatedAdminGuildRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/packages': typeof AuthenticatedAdminPackagesRoute
@@ -185,11 +207,13 @@ export interface FileRoutesByFullPath {
   '/admin/slider': typeof AuthenticatedAdminSliderRoute
   '/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
+  '/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
   '/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
   '/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -200,6 +224,7 @@ export interface FileRoutesByTo {
   '/api/dispatch': typeof ApiDispatchRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/admin/deposits': typeof AuthenticatedAdminDepositsRoute
   '/admin/guild': typeof AuthenticatedAdminGuildRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/packages': typeof AuthenticatedAdminPackagesRoute
@@ -208,11 +233,13 @@ export interface FileRoutesByTo {
   '/admin/slider': typeof AuthenticatedAdminSliderRoute
   '/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
+  '/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
   '/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
   '/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -227,6 +254,7 @@ export interface FileRoutesById {
   '/api/dispatch': typeof ApiDispatchRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/_authenticated/admin/deposits': typeof AuthenticatedAdminDepositsRoute
   '/_authenticated/admin/guild': typeof AuthenticatedAdminGuildRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/packages': typeof AuthenticatedAdminPackagesRoute
@@ -235,11 +263,13 @@ export interface FileRoutesById {
   '/_authenticated/admin/slider': typeof AuthenticatedAdminSliderRoute
   '/_authenticated/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/_authenticated/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
+  '/_authenticated/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
   '/_authenticated/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/_authenticated/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
   '/_authenticated/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -254,6 +284,7 @@ export interface FileRouteTypes {
     | '/api/dispatch'
     | '/admin/categories'
     | '/admin/coupons'
+    | '/admin/deposits'
     | '/admin/guild'
     | '/admin/orders'
     | '/admin/packages'
@@ -262,11 +293,13 @@ export interface FileRouteTypes {
     | '/admin/slider'
     | '/admin/visit-orders'
     | '/dashboard/coupons'
+    | '/dashboard/deposit'
     | '/dashboard/guild'
     | '/dashboard/orders'
     | '/dashboard/packages'
     | '/dashboard/panels'
     | '/dashboard/profile'
+    | '/dashboard/wallet'
     | '/api/public/cron-likes'
     | '/admin/'
     | '/dashboard/'
@@ -277,6 +310,7 @@ export interface FileRouteTypes {
     | '/api/dispatch'
     | '/admin/categories'
     | '/admin/coupons'
+    | '/admin/deposits'
     | '/admin/guild'
     | '/admin/orders'
     | '/admin/packages'
@@ -285,11 +319,13 @@ export interface FileRouteTypes {
     | '/admin/slider'
     | '/admin/visit-orders'
     | '/dashboard/coupons'
+    | '/dashboard/deposit'
     | '/dashboard/guild'
     | '/dashboard/orders'
     | '/dashboard/packages'
     | '/dashboard/panels'
     | '/dashboard/profile'
+    | '/dashboard/wallet'
     | '/api/public/cron-likes'
     | '/admin'
     | '/dashboard'
@@ -303,6 +339,7 @@ export interface FileRouteTypes {
     | '/api/dispatch'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/coupons'
+    | '/_authenticated/admin/deposits'
     | '/_authenticated/admin/guild'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/packages'
@@ -311,11 +348,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/slider'
     | '/_authenticated/admin/visit-orders'
     | '/_authenticated/dashboard/coupons'
+    | '/_authenticated/dashboard/deposit'
     | '/_authenticated/dashboard/guild'
     | '/_authenticated/dashboard/orders'
     | '/_authenticated/dashboard/packages'
     | '/_authenticated/dashboard/panels'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/wallet'
     | '/api/public/cron-likes'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
@@ -394,6 +433,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronLikesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard/wallet': {
+      id: '/_authenticated/dashboard/wallet'
+      path: '/wallet'
+      fullPath: '/dashboard/wallet'
+      preLoaderRoute: typeof AuthenticatedDashboardWalletRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/profile': {
       id: '/_authenticated/dashboard/profile'
       path: '/profile'
@@ -427,6 +473,13 @@ declare module '@tanstack/react-router' {
       path: '/guild'
       fullPath: '/dashboard/guild'
       preLoaderRoute: typeof AuthenticatedDashboardGuildRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/deposit': {
+      id: '/_authenticated/dashboard/deposit'
+      path: '/deposit'
+      fullPath: '/dashboard/deposit'
+      preLoaderRoute: typeof AuthenticatedDashboardDepositRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/coupons': {
@@ -485,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminGuildRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/deposits': {
+      id: '/_authenticated/admin/deposits'
+      path: '/deposits'
+      fullPath: '/admin/deposits'
+      preLoaderRoute: typeof AuthenticatedAdminDepositsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/coupons': {
       id: '/_authenticated/admin/coupons'
       path: '/coupons'
@@ -505,6 +565,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
+  AuthenticatedAdminDepositsRoute: typeof AuthenticatedAdminDepositsRoute
   AuthenticatedAdminGuildRoute: typeof AuthenticatedAdminGuildRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPackagesRoute: typeof AuthenticatedAdminPackagesRoute
@@ -518,6 +579,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
+  AuthenticatedAdminDepositsRoute: AuthenticatedAdminDepositsRoute,
   AuthenticatedAdminGuildRoute: AuthenticatedAdminGuildRoute,
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminPackagesRoute: AuthenticatedAdminPackagesRoute,
@@ -533,22 +595,26 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardCouponsRoute: typeof AuthenticatedDashboardCouponsRoute
+  AuthenticatedDashboardDepositRoute: typeof AuthenticatedDashboardDepositRoute
   AuthenticatedDashboardGuildRoute: typeof AuthenticatedDashboardGuildRoute
   AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
   AuthenticatedDashboardPackagesRoute: typeof AuthenticatedDashboardPackagesRoute
   AuthenticatedDashboardPanelsRoute: typeof AuthenticatedDashboardPanelsRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardCouponsRoute: AuthenticatedDashboardCouponsRoute,
+    AuthenticatedDashboardDepositRoute: AuthenticatedDashboardDepositRoute,
     AuthenticatedDashboardGuildRoute: AuthenticatedDashboardGuildRoute,
     AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
     AuthenticatedDashboardPackagesRoute: AuthenticatedDashboardPackagesRoute,
     AuthenticatedDashboardPanelsRoute: AuthenticatedDashboardPanelsRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+    AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
 
@@ -581,13 +647,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

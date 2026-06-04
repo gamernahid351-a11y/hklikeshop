@@ -18,6 +18,8 @@ type S = {
   like_api_url: string;
   visit_api_url: string;
   bkash_number: string;
+  nagad_number: string;
+  min_deposit: number;
   bkash_number_visit: string;
   bkash_number_guild: string;
   payment_instructions: string;
@@ -100,8 +102,16 @@ function AdminSettings() {
           <Input value={s.visit_api_url} onChange={(e) => setS({ ...s, visit_api_url: e.target.value })} placeholder="https://your-domain.com/visit?uid={uid}&region=bd" />
         </div>
         <div>
-          <Label>bKash Number (Likes)</Label>
-          <Input value={s.bkash_number} onChange={(e) => setS({ ...s, bkash_number: e.target.value })} placeholder="Admin bKash number" />
+          <Label>bKash Number (Likes / Deposits)</Label>
+          <Input value={s.bkash_number} onChange={(e) => setS({ ...s, bkash_number: e.target.value })} placeholder="01XXXXXXXXX" />
+        </div>
+        <div>
+          <Label>Nagad Number (Deposits)</Label>
+          <Input value={s.nagad_number ?? ""} onChange={(e) => setS({ ...s, nagad_number: e.target.value })} placeholder="01XXXXXXXXX" />
+        </div>
+        <div>
+          <Label>Minimum Deposit ৳</Label>
+          <Input type="number" value={s.min_deposit ?? 10} onChange={(e) => setS({ ...s, min_deposit: Number(e.target.value) })} />
         </div>
         <div>
           <Label>bKash Number (Visits)</Label>

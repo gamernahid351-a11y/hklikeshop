@@ -33,6 +33,8 @@ export type Database = {
           level_up_web_url: string
           like_api_url: string
           logo_url: string | null
+          min_deposit: number
+          nagad_number: string
           payment_instructions: string
           rupantor_enabled: boolean
           support_messenger_url: string
@@ -59,6 +61,8 @@ export type Database = {
           level_up_web_url?: string
           like_api_url?: string
           logo_url?: string | null
+          min_deposit?: number
+          nagad_number?: string
           payment_instructions?: string
           rupantor_enabled?: boolean
           support_messenger_url?: string
@@ -85,6 +89,8 @@ export type Database = {
           level_up_web_url?: string
           like_api_url?: string
           logo_url?: string | null
+          min_deposit?: number
+          nagad_number?: string
           payment_instructions?: string
           rupantor_enabled?: boolean
           support_messenger_url?: string
@@ -206,6 +212,51 @@ export type Database = {
           id?: string
           is_used?: boolean
           type?: Database["public"]["Enums"]["coupon_type"]
+        }
+        Relationships: []
+      }
+      deposit_orders: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          created_at: string
+          id: string
+          method: string
+          payment_screenshot_url: string | null
+          rejection_reason: string | null
+          sender_number: string | null
+          status: string
+          trx_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          approved_at?: string | null
+          created_at?: string
+          id?: string
+          method: string
+          payment_screenshot_url?: string | null
+          rejection_reason?: string | null
+          sender_number?: string | null
+          status?: string
+          trx_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          created_at?: string
+          id?: string
+          method?: string
+          payment_screenshot_url?: string | null
+          rejection_reason?: string | null
+          sender_number?: string | null
+          status?: string
+          trx_id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -497,6 +548,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean
+          like_api_url: string | null
           likes_per_day: number
           name: string
           price_bdt: number
@@ -513,6 +565,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          like_api_url?: string | null
           likes_per_day?: number
           name: string
           price_bdt: number
@@ -529,6 +582,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          like_api_url?: string | null
           likes_per_day?: number
           name?: string
           price_bdt?: number
@@ -733,6 +787,7 @@ export type Database = {
           id: string
           updated_at: string
           user_id: string
+          wallet_balance: number
         }
         Insert: {
           avatar_url?: string | null
@@ -742,6 +797,7 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id: string
+          wallet_balance?: number
         }
         Update: {
           avatar_url?: string | null
@@ -751,6 +807,7 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+          wallet_balance?: number
         }
         Relationships: []
       }
@@ -805,6 +862,39 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          description: string | null
+          id: string
+          kind: string
+          reference_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind: string
+          reference_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          reference_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -815,6 +905,14 @@ export type Database = {
         Returns: {
           code_value: string
           message: string
+          success: boolean
+        }[]
+      }
+      approve_deposit_order: {
+        Args: { _deposit_id: string }
+        Returns: {
+          message: string
+          new_balance: number
           success: boolean
         }[]
       }
@@ -832,6 +930,14 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      purchase_with_wallet: {
+        Args: { _ff_uid: string; _package_id: string }
+        Returns: {
+          message: string
+          order_id: string
+          success: boolean
+        }[]
       }
     }
     Enums: {
