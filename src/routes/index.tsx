@@ -136,7 +136,7 @@ function Landing() {
       </main>
 
       <footer className="px-4 py-7 text-center text-xs text-muted-foreground border-t border-border bg-card/60">
-        © {new Date().getFullYear()} FF LIKES BD. Free Fire like service only.
+        © {new Date().getFullYear()} HK LIKE SHOP. Free Fire like service only.
       </footer>
       <SupportButton />
     </div>
