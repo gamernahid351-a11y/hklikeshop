@@ -219,9 +219,11 @@ export type Database = {
         Row: {
           amount: number
           approved_at: string | null
+          bohudur_paymentkey: string | null
           created_at: string
           id: string
           method: string
+          payment_provider: string | null
           payment_screenshot_url: string | null
           rejection_reason: string | null
           sender_number: string | null
@@ -233,9 +235,11 @@ export type Database = {
         Insert: {
           amount: number
           approved_at?: string | null
+          bohudur_paymentkey?: string | null
           created_at?: string
           id?: string
           method: string
+          payment_provider?: string | null
           payment_screenshot_url?: string | null
           rejection_reason?: string | null
           sender_number?: string | null
@@ -247,9 +251,11 @@ export type Database = {
         Update: {
           amount?: number
           approved_at?: string | null
+          bohudur_paymentkey?: string | null
           created_at?: string
           id?: string
           method?: string
+          payment_provider?: string | null
           payment_screenshot_url?: string | null
           rejection_reason?: string | null
           sender_number?: string | null
@@ -905,6 +911,14 @@ export type Database = {
         Returns: {
           code_value: string
           message: string
+          success: boolean
+        }[]
+      }
+      approve_deposit_by_paymentkey: {
+        Args: { _paymentkey: string }
+        Returns: {
+          message: string
+          new_balance: number
           success: boolean
         }[]
       }
