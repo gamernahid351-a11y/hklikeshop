@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, Package as Pkg, ShoppingCart, Settings, LogOut, ShieldCheck, Inbox, Wallet } from "lucide-react";
-import gsLogo from "@/assets/gs-shop-logo.png";
+import hkLogo from "@/assets/hk-logo.jpg.asset.json";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import type { ReactNode } from "react";
