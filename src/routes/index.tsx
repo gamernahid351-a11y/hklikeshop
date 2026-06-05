@@ -85,7 +85,7 @@ function Landing() {
         <section className="ff-grid-surface px-4 pt-20 pb-14 text-center">
           <div className="max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs sm:text-sm font-bold text-primary shadow-card">
-              <span className="w-2 h-2 rounded-full bg-primary" /> #1 Trusted FF Likes Provider in BD
+              <span className="w-2 h-2 rounded-full bg-primary" /> #1 Trusted FF Likes Provider — HK Like Shop
             </div>
             <h1 className="mt-8 font-display text-4xl sm:text-6xl font-extrabold leading-tight text-foreground">
               Show Off your FF Profile <span className="text-primary">Like a Pro.</span>
