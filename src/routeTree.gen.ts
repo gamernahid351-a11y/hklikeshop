@@ -18,12 +18,14 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicCronLikesRouteImport } from './routes/api/public/cron-likes'
+import { Route as ApiPublicBohudurWebhookRouteImport } from './routes/api/public/bohudur-webhook'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardPanelsRouteImport } from './routes/_authenticated/dashboard.panels'
 import { Route as AuthenticatedDashboardPackagesRouteImport } from './routes/_authenticated/dashboard.packages'
 import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
 import { Route as AuthenticatedDashboardGuildRouteImport } from './routes/_authenticated/dashboard.guild'
+import { Route as AuthenticatedDashboardDepositResultRouteImport } from './routes/_authenticated/dashboard.deposit-result'
 import { Route as AuthenticatedDashboardDepositRouteImport } from './routes/_authenticated/dashboard.deposit'
 import { Route as AuthenticatedDashboardCouponsRouteImport } from './routes/_authenticated/dashboard.coupons'
 import { Route as AuthenticatedAdminVisitOrdersRouteImport } from './routes/_authenticated/admin.visit-orders'
@@ -82,6 +84,11 @@ const ApiPublicCronLikesRoute = ApiPublicCronLikesRouteImport.update({
   path: '/api/public/cron-likes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBohudurWebhookRoute = ApiPublicBohudurWebhookRouteImport.update({
+  id: '/api/public/bohudur-webhook',
+  path: '/api/public/bohudur-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardWalletRoute =
   AuthenticatedDashboardWalletRouteImport.update({
     id: '/wallet',
@@ -116,6 +123,12 @@ const AuthenticatedDashboardGuildRoute =
   AuthenticatedDashboardGuildRouteImport.update({
     id: '/guild',
     path: '/guild',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardDepositResultRoute =
+  AuthenticatedDashboardDepositResultRouteImport.update({
+    id: '/deposit-result',
+    path: '/deposit-result',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardDepositRoute =
@@ -208,12 +221,14 @@ export interface FileRoutesByFullPath {
   '/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
   '/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
+  '/dashboard/deposit-result': typeof AuthenticatedDashboardDepositResultRoute
   '/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
   '/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/api/public/bohudur-webhook': typeof ApiPublicBohudurWebhookRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -234,12 +249,14 @@ export interface FileRoutesByTo {
   '/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
   '/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
+  '/dashboard/deposit-result': typeof AuthenticatedDashboardDepositResultRoute
   '/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
   '/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/api/public/bohudur-webhook': typeof ApiPublicBohudurWebhookRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -264,12 +281,14 @@ export interface FileRoutesById {
   '/_authenticated/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/_authenticated/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
   '/_authenticated/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
+  '/_authenticated/dashboard/deposit-result': typeof AuthenticatedDashboardDepositResultRoute
   '/_authenticated/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/_authenticated/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
   '/_authenticated/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/api/public/bohudur-webhook': typeof ApiPublicBohudurWebhookRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -294,12 +313,14 @@ export interface FileRouteTypes {
     | '/admin/visit-orders'
     | '/dashboard/coupons'
     | '/dashboard/deposit'
+    | '/dashboard/deposit-result'
     | '/dashboard/guild'
     | '/dashboard/orders'
     | '/dashboard/packages'
     | '/dashboard/panels'
     | '/dashboard/profile'
     | '/dashboard/wallet'
+    | '/api/public/bohudur-webhook'
     | '/api/public/cron-likes'
     | '/admin/'
     | '/dashboard/'
@@ -320,12 +341,14 @@ export interface FileRouteTypes {
     | '/admin/visit-orders'
     | '/dashboard/coupons'
     | '/dashboard/deposit'
+    | '/dashboard/deposit-result'
     | '/dashboard/guild'
     | '/dashboard/orders'
     | '/dashboard/packages'
     | '/dashboard/panels'
     | '/dashboard/profile'
     | '/dashboard/wallet'
+    | '/api/public/bohudur-webhook'
     | '/api/public/cron-likes'
     | '/admin'
     | '/dashboard'
@@ -349,12 +372,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/visit-orders'
     | '/_authenticated/dashboard/coupons'
     | '/_authenticated/dashboard/deposit'
+    | '/_authenticated/dashboard/deposit-result'
     | '/_authenticated/dashboard/guild'
     | '/_authenticated/dashboard/orders'
     | '/_authenticated/dashboard/packages'
     | '/_authenticated/dashboard/panels'
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/wallet'
+    | '/api/public/bohudur-webhook'
     | '/api/public/cron-likes'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
@@ -365,6 +390,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiDispatchRoute: typeof ApiDispatchRoute
+  ApiPublicBohudurWebhookRoute: typeof ApiPublicBohudurWebhookRoute
   ApiPublicCronLikesRoute: typeof ApiPublicCronLikesRoute
 }
 
@@ -433,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronLikesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bohudur-webhook': {
+      id: '/api/public/bohudur-webhook'
+      path: '/api/public/bohudur-webhook'
+      fullPath: '/api/public/bohudur-webhook'
+      preLoaderRoute: typeof ApiPublicBohudurWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard/wallet': {
       id: '/_authenticated/dashboard/wallet'
       path: '/wallet'
@@ -473,6 +506,13 @@ declare module '@tanstack/react-router' {
       path: '/guild'
       fullPath: '/dashboard/guild'
       preLoaderRoute: typeof AuthenticatedDashboardGuildRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/deposit-result': {
+      id: '/_authenticated/dashboard/deposit-result'
+      path: '/deposit-result'
+      fullPath: '/dashboard/deposit-result'
+      preLoaderRoute: typeof AuthenticatedDashboardDepositResultRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/deposit': {
@@ -596,6 +636,7 @@ const AuthenticatedAdminRouteWithChildren =
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardCouponsRoute: typeof AuthenticatedDashboardCouponsRoute
   AuthenticatedDashboardDepositRoute: typeof AuthenticatedDashboardDepositRoute
+  AuthenticatedDashboardDepositResultRoute: typeof AuthenticatedDashboardDepositResultRoute
   AuthenticatedDashboardGuildRoute: typeof AuthenticatedDashboardGuildRoute
   AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
   AuthenticatedDashboardPackagesRoute: typeof AuthenticatedDashboardPackagesRoute
@@ -609,6 +650,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardCouponsRoute: AuthenticatedDashboardCouponsRoute,
     AuthenticatedDashboardDepositRoute: AuthenticatedDashboardDepositRoute,
+    AuthenticatedDashboardDepositResultRoute:
+      AuthenticatedDashboardDepositResultRoute,
     AuthenticatedDashboardGuildRoute: AuthenticatedDashboardGuildRoute,
     AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
     AuthenticatedDashboardPackagesRoute: AuthenticatedDashboardPackagesRoute,
@@ -642,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiDispatchRoute: ApiDispatchRoute,
+  ApiPublicBohudurWebhookRoute: ApiPublicBohudurWebhookRoute,
   ApiPublicCronLikesRoute: ApiPublicCronLikesRoute,
 }
 export const routeTree = rootRouteImport

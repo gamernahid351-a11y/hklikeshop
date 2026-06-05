@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getLandingData } from "@/lib/landing.functions";
 import { BadgeCheck, Clock, Heart, Menu, ShieldCheck, ShoppingCart, Star, ThumbsUp, User as UserIcon, Zap } from "lucide-react";
-import gsLogo from "@/assets/gs-shop-logo.png";
+import hkLogo from "@/assets/hk-logo.jpg.asset.json";
 import { LandingNoticePopup } from "@/components/LandingNoticePopup";
 import { SupportButton } from "@/components/SupportButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FF Likes BD — Free Fire Like Service" },
-      { name: "description", content: "Buy Free Fire profile likes for Bangladesh server with safe, fast delivery and simple bKash payment." },
-      { property: "og:title", content: "FF Likes BD" },
+      { title: "HK Like Shop — Free Fire Like Service" },
+      { name: "description", content: "HK Like Shop — buy Free Fire profile likes for Bangladesh server with safe, fast delivery and instant auto payment." },
+      { property: "og:title", content: "HK Like Shop" },
       { property: "og:description", content: "Free Fire profile like service for BD players." },
     ],
   }),
@@ -63,9 +63,9 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 min-w-0">
-            <img src={logoUrl || gsLogo} alt="FF Likes BD logo" className="w-10 h-10 rounded-lg object-cover ring-1 ring-border" />
+            <img src={logoUrl || hkLogo.url} alt="HK Like Shop logo" className="w-10 h-10 rounded-lg object-cover ring-1 ring-border" />
             <div className="font-display font-extrabold text-lg sm:text-xl leading-none">
-              FF LIKES <span className="text-primary">BD</span>
+              HK LIKE <span className="text-primary">SHOP</span>
             </div>
           </Link>
           <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ function Landing() {
         <section className="ff-grid-surface px-4 pt-20 pb-14 text-center">
           <div className="max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs sm:text-sm font-bold text-primary shadow-card">
-              <span className="w-2 h-2 rounded-full bg-primary" /> #1 Trusted FF Likes Provider in BD
+              <span className="w-2 h-2 rounded-full bg-primary" /> #1 Trusted FF Likes Provider — HK Like Shop
             </div>
             <h1 className="mt-8 font-display text-4xl sm:text-6xl font-extrabold leading-tight text-foreground">
               Show Off your FF Profile <span className="text-primary">Like a Pro.</span>
@@ -136,7 +136,7 @@ function Landing() {
       </main>
 
       <footer className="px-4 py-7 text-center text-xs text-muted-foreground border-t border-border bg-card/60">
-        © {new Date().getFullYear()} FF LIKES BD. Free Fire like service only.
+        © {new Date().getFullYear()} HK LIKE SHOP. Free Fire like service only.
       </footer>
       <SupportButton />
     </div>
