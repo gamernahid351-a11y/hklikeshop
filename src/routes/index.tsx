@@ -63,9 +63,9 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 min-w-0">
-            <img src={logoUrl || gsLogo} alt="FF Likes BD logo" className="w-10 h-10 rounded-lg object-cover ring-1 ring-border" />
+            <img src={logoUrl || hkLogo.url} alt="HK Like Shop logo" className="w-10 h-10 rounded-lg object-cover ring-1 ring-border" />
             <div className="font-display font-extrabold text-lg sm:text-xl leading-none">
-              FF LIKES <span className="text-primary">BD</span>
+              HK LIKE <span className="text-primary">SHOP</span>
             </div>
           </Link>
           <div className="flex items-center gap-2">
