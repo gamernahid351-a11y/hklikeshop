@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as ApiPublicCronLikesRouteImport } from './routes/api/public/cron-likes'
+import { Route as ApiPublicBohudurWebhookRouteImport } from './routes/api/public/bohudur-webhook'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard.wallet'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardPanelsRouteImport } from './routes/_authenticated/dashboard.panels'
@@ -80,6 +81,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
 const ApiPublicCronLikesRoute = ApiPublicCronLikesRouteImport.update({
   id: '/api/public/cron-likes',
   path: '/api/public/cron-likes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBohudurWebhookRoute = ApiPublicBohudurWebhookRouteImport.update({
+  id: '/api/public/bohudur-webhook',
+  path: '/api/public/bohudur-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardWalletRoute =
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/api/public/bohudur-webhook': typeof ApiPublicBohudurWebhookRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/api/public/bohudur-webhook': typeof ApiPublicBohudurWebhookRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -270,6 +278,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/panels': typeof AuthenticatedDashboardPanelsRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/api/public/bohudur-webhook': typeof ApiPublicBohudurWebhookRoute
   '/api/public/cron-likes': typeof ApiPublicCronLikesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/dashboard/panels'
     | '/dashboard/profile'
     | '/dashboard/wallet'
+    | '/api/public/bohudur-webhook'
     | '/api/public/cron-likes'
     | '/admin/'
     | '/dashboard/'
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
     | '/dashboard/panels'
     | '/dashboard/profile'
     | '/dashboard/wallet'
+    | '/api/public/bohudur-webhook'
     | '/api/public/cron-likes'
     | '/admin'
     | '/dashboard'
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/panels'
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/wallet'
+    | '/api/public/bohudur-webhook'
     | '/api/public/cron-likes'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
@@ -365,6 +377,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiDispatchRoute: typeof ApiDispatchRoute
+  ApiPublicBohudurWebhookRoute: typeof ApiPublicBohudurWebhookRoute
   ApiPublicCronLikesRoute: typeof ApiPublicCronLikesRoute
 }
 
@@ -431,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/cron-likes'
       fullPath: '/api/public/cron-likes'
       preLoaderRoute: typeof ApiPublicCronLikesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/bohudur-webhook': {
+      id: '/api/public/bohudur-webhook'
+      path: '/api/public/bohudur-webhook'
+      fullPath: '/api/public/bohudur-webhook'
+      preLoaderRoute: typeof ApiPublicBohudurWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard/wallet': {
@@ -642,8 +662,19 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiDispatchRoute: ApiDispatchRoute,
+  ApiPublicBohudurWebhookRoute: ApiPublicBohudurWebhookRoute,
   ApiPublicCronLikesRoute: ApiPublicCronLikesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
