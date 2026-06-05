@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getLandingData } from "@/lib/landing.functions";
 import { BadgeCheck, Clock, Heart, Menu, ShieldCheck, ShoppingCart, Star, ThumbsUp, User as UserIcon, Zap } from "lucide-react";
-import gsLogo from "@/assets/gs-shop-logo.png";
+import hkLogo from "@/assets/hk-logo.jpg.asset.json";
 import { LandingNoticePopup } from "@/components/LandingNoticePopup";
 import { SupportButton } from "@/components/SupportButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FF Likes BD — Free Fire Like Service" },
-      { name: "description", content: "Buy Free Fire profile likes for Bangladesh server with safe, fast delivery and simple bKash payment." },
-      { property: "og:title", content: "FF Likes BD" },
+      { title: "HK Like Shop — Free Fire Like Service" },
+      { name: "description", content: "HK Like Shop — buy Free Fire profile likes for Bangladesh server with safe, fast delivery and instant auto payment." },
+      { property: "og:title", content: "HK Like Shop" },
       { property: "og:description", content: "Free Fire profile like service for BD players." },
     ],
   }),
