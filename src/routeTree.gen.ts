@@ -25,6 +25,7 @@ import { Route as AuthenticatedDashboardPanelsRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardPackagesRouteImport } from './routes/_authenticated/dashboard.packages'
 import { Route as AuthenticatedDashboardOrdersRouteImport } from './routes/_authenticated/dashboard.orders'
 import { Route as AuthenticatedDashboardGuildRouteImport } from './routes/_authenticated/dashboard.guild'
+import { Route as AuthenticatedDashboardDepositResultRouteImport } from './routes/_authenticated/dashboard.deposit-result'
 import { Route as AuthenticatedDashboardDepositRouteImport } from './routes/_authenticated/dashboard.deposit'
 import { Route as AuthenticatedDashboardCouponsRouteImport } from './routes/_authenticated/dashboard.coupons'
 import { Route as AuthenticatedAdminVisitOrdersRouteImport } from './routes/_authenticated/admin.visit-orders'
@@ -124,6 +125,12 @@ const AuthenticatedDashboardGuildRoute =
     path: '/guild',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardDepositResultRoute =
+  AuthenticatedDashboardDepositResultRouteImport.update({
+    id: '/deposit-result',
+    path: '/deposit-result',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardDepositRoute =
   AuthenticatedDashboardDepositRouteImport.update({
     id: '/deposit',
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
   '/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
+  '/dashboard/deposit-result': typeof AuthenticatedDashboardDepositResultRoute
   '/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
@@ -241,6 +249,7 @@ export interface FileRoutesByTo {
   '/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
   '/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
+  '/dashboard/deposit-result': typeof AuthenticatedDashboardDepositResultRoute
   '/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
@@ -272,6 +281,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/visit-orders': typeof AuthenticatedAdminVisitOrdersRoute
   '/_authenticated/dashboard/coupons': typeof AuthenticatedDashboardCouponsRoute
   '/_authenticated/dashboard/deposit': typeof AuthenticatedDashboardDepositRoute
+  '/_authenticated/dashboard/deposit-result': typeof AuthenticatedDashboardDepositResultRoute
   '/_authenticated/dashboard/guild': typeof AuthenticatedDashboardGuildRoute
   '/_authenticated/dashboard/orders': typeof AuthenticatedDashboardOrdersRoute
   '/_authenticated/dashboard/packages': typeof AuthenticatedDashboardPackagesRoute
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/admin/visit-orders'
     | '/dashboard/coupons'
     | '/dashboard/deposit'
+    | '/dashboard/deposit-result'
     | '/dashboard/guild'
     | '/dashboard/orders'
     | '/dashboard/packages'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/admin/visit-orders'
     | '/dashboard/coupons'
     | '/dashboard/deposit'
+    | '/dashboard/deposit-result'
     | '/dashboard/guild'
     | '/dashboard/orders'
     | '/dashboard/packages'
@@ -360,6 +372,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/visit-orders'
     | '/_authenticated/dashboard/coupons'
     | '/_authenticated/dashboard/deposit'
+    | '/_authenticated/dashboard/deposit-result'
     | '/_authenticated/dashboard/guild'
     | '/_authenticated/dashboard/orders'
     | '/_authenticated/dashboard/packages'
@@ -495,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardGuildRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/deposit-result': {
+      id: '/_authenticated/dashboard/deposit-result'
+      path: '/deposit-result'
+      fullPath: '/dashboard/deposit-result'
+      preLoaderRoute: typeof AuthenticatedDashboardDepositResultRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/deposit': {
       id: '/_authenticated/dashboard/deposit'
       path: '/deposit'
@@ -616,6 +636,7 @@ const AuthenticatedAdminRouteWithChildren =
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardCouponsRoute: typeof AuthenticatedDashboardCouponsRoute
   AuthenticatedDashboardDepositRoute: typeof AuthenticatedDashboardDepositRoute
+  AuthenticatedDashboardDepositResultRoute: typeof AuthenticatedDashboardDepositResultRoute
   AuthenticatedDashboardGuildRoute: typeof AuthenticatedDashboardGuildRoute
   AuthenticatedDashboardOrdersRoute: typeof AuthenticatedDashboardOrdersRoute
   AuthenticatedDashboardPackagesRoute: typeof AuthenticatedDashboardPackagesRoute
@@ -629,6 +650,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardCouponsRoute: AuthenticatedDashboardCouponsRoute,
     AuthenticatedDashboardDepositRoute: AuthenticatedDashboardDepositRoute,
+    AuthenticatedDashboardDepositResultRoute:
+      AuthenticatedDashboardDepositResultRoute,
     AuthenticatedDashboardGuildRoute: AuthenticatedDashboardGuildRoute,
     AuthenticatedDashboardOrdersRoute: AuthenticatedDashboardOrdersRoute,
     AuthenticatedDashboardPackagesRoute: AuthenticatedDashboardPackagesRoute,
@@ -668,3 +691,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
