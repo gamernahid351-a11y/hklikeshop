@@ -8,10 +8,10 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import gsLogo from "@/assets/gs-logo.png";
+import hkLogo from "@/assets/hk-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Login • FF LIKES BD" }] }),
+  head: () => ({ meta: [{ title: "Login • HK Like Shop" }] }),
   component: AuthPage,
 });
 
