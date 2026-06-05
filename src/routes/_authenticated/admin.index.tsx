@@ -37,7 +37,7 @@ function AdminHome() {
     <div className="space-y-5 max-w-3xl mx-auto">
       <div>
         <h1 className="font-display font-bold text-2xl">Admin Dashboard</h1>
-        <p className="text-sm text-muted-foreground">FF Likes BD — Wallet & Like orders</p>
+        <p className="text-sm text-muted-foreground">HK Like Shop — Wallet & Like orders</p>
       </div>
       <div className="grid grid-cols-2 gap-3">
         {cards.map((st) => (
