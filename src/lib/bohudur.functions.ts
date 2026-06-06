@@ -1,10 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHost, getRequestHeader } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const BOHUDUR_BASE = "https://request.bohudur.one";
 
 export const createBohudurDeposit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
     z
       .object({
@@ -12,37 +14,36 @@ export const createBohudurDeposit = createServerFn({ method: "POST" })
       })
       .parse(input)
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const apiKey = process.env.BOHUDUR_API_KEY;
-    if (!apiKey) throw new Error("Payment gateway not configured");
+    if (!apiKey) {
+      console.error("[Bohudur] BOHUDUR_API_KEY not set");
+      throw new Error("Payment gateway not configured. Please contact admin.");
+    }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { createClient } = await import("@supabase/supabase-js");
+    const { userId, supabase } = context;
 
-    const authHeader = getRequestHeader("authorization");
-    if (!authHeader?.startsWith("Bearer ")) throw new Response("Unauthorized", { status: 401 });
-    const token = authHeader.slice(7);
-
-    const userClient = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
-      auth: { persistSession: false, autoRefreshToken: false },
-      global: { headers: { Authorization: `Bearer ${token}` } },
-    });
-    const { data: claims, error: cErr } = await userClient.auth.getClaims(token);
-    if (cErr || !claims?.claims?.sub) throw new Response("Unauthorized", { status: 401 });
-    const userId = claims.claims.sub as string;
-
-    const { data: prof } = await supabaseAdmin
+    // Get user profile
+    const { data: prof } = await supabase
       .from("profiles")
       .select("email,full_name")
       .eq("user_id", userId)
       .maybeSingle();
 
-    // Build absolute URLs from incoming request host
-    const host = getRequestHost();
-    const proto = host.includes("localhost") ? "http" : "https";
-    const origin = `${proto}://${host}`;
+    // Build absolute URL from incoming request
+    const req = getRequest();
+    let origin = "";
+    try {
+      origin = new URL(req.url).origin;
+    } catch {
+      origin = "";
+    }
+    if (!origin || origin.startsWith("http://localhost") || origin.includes("127.0.0.1")) {
+      // Fallback to the stable published URL so Bohudur accepts it
+      origin = "https://hklikeshop.lovable.app";
+    }
 
-    // Insert a pending deposit row first to reserve a record
     const trxId = `BOH-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     const { data: dep, error: insErr } = await supabaseAdmin
       .from("deposit_orders")
@@ -56,12 +57,18 @@ export const createBohudurDeposit = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
-    if (insErr || !dep) throw new Error(insErr?.message || "Could not create deposit");
+    if (insErr || !dep) {
+      console.error("[Bohudur] insert deposit failed:", insErr);
+      throw new Error(insErr?.message || "Could not create deposit");
+    }
+
+    const email = (prof?.email as string) || `user-${userId.slice(0, 8)}@hklikeshop.com`;
+    const fullName = (prof?.full_name as string)?.trim() || "HK Customer";
 
     const body = {
-      full_name: (prof?.full_name as string) || "HK Customer",
-      email: (prof?.email as string) || "noreply@hklikeshop.com",
-      amount: data.amount,
+      full_name: fullName,
+      email,
+      amount: Number(data.amount),
       return_type: "GET",
       redirect_url: `${origin}/dashboard/deposit-result?dep=${dep.id}`,
       cancel_url: `${origin}/dashboard/deposit-result?dep=${dep.id}&cancel=1`,
@@ -72,19 +79,34 @@ export const createBohudurDeposit = createServerFn({ method: "POST" })
       },
     };
 
-    const res = await fetch(`${BOHUDUR_BASE}/create/v2/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "AH-BOHUDUR-API-KEY": apiKey,
-      },
-      body: JSON.stringify(body),
-    });
-    const json = (await res.json()) as any;
-    if (json.status !== "success" || !json.payment_url || !json.paymentkey) {
-      // mark deposit as failed
-      await supabaseAdmin.from("deposit_orders").update({ status: "rejected", rejection_reason: json.message || "gateway error" }).eq("id", dep.id);
-      throw new Error(json.message || "Payment gateway error");
+    let res: Response;
+    let json: any;
+    try {
+      res = await fetch(`${BOHUDUR_BASE}/create/v2/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "AH-BOHUDUR-API-KEY": apiKey,
+        },
+        body: JSON.stringify(body),
+      });
+      const text = await res.text();
+      try { json = JSON.parse(text); } catch { json = { status: "failed", message: text || "Invalid gateway response" }; }
+    } catch (e: any) {
+      console.error("[Bohudur] fetch failed:", e);
+      await supabaseAdmin.from("deposit_orders").update({ status: "rejected", rejection_reason: "Gateway unreachable" }).eq("id", dep.id);
+      throw new Error("Payment gateway unreachable. Try again.");
+    }
+
+    console.log("[Bohudur] create response:", res.status, JSON.stringify(json));
+
+    if (json?.status !== "success" || !json?.payment_url || !json?.paymentkey) {
+      const msg = `${json?.message || "Gateway error"}${json?.responseCode ? ` (code ${json.responseCode})` : ""}`;
+      await supabaseAdmin
+        .from("deposit_orders")
+        .update({ status: "rejected", rejection_reason: msg })
+        .eq("id", dep.id);
+      throw new Error(msg);
     }
 
     await supabaseAdmin
