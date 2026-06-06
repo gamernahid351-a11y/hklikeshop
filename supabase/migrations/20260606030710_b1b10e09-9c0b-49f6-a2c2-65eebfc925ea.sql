@@ -1,0 +1,2 @@
+ALTER TABLE public.deposit_orders DROP CONSTRAINT IF EXISTS deposit_orders_method_check;
+ALTER TABLE public.deposit_orders ADD CONSTRAINT deposit_orders_method_check CHECK (method = ANY (ARRAY['bkash'::text, 'nagad'::text, 'bohudur'::text]));
