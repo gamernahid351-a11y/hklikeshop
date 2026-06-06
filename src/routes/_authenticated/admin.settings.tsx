@@ -33,6 +33,7 @@ type S = {
   support_whatsapp_url: string;
   support_telegram_url: string;
   support_messenger_url: string;
+  support_youtube_url: string;
   landing_notice_enabled: boolean;
   landing_notice_image_url: string;
   landing_notice_telegram_url: string;
