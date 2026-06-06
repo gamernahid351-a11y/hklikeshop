@@ -33,6 +33,7 @@ type S = {
   support_whatsapp_url: string;
   support_telegram_url: string;
   support_messenger_url: string;
+  support_youtube_url: string;
   landing_notice_enabled: boolean;
   landing_notice_image_url: string;
   landing_notice_telegram_url: string;
@@ -157,6 +158,10 @@ function AdminSettings() {
             <div>
               <Label>Messenger URL</Label>
               <Input value={s.support_messenger_url ?? ""} onChange={(e) => setS({ ...s, support_messenger_url: e.target.value })} placeholder="https://m.me/yourpage" />
+            </div>
+            <div>
+              <Label>YouTube URL</Label>
+              <Input value={s.support_youtube_url ?? ""} onChange={(e) => setS({ ...s, support_youtube_url: e.target.value })} placeholder="https://youtube.com/@yourchannel" />
             </div>
           </div>
         </div>

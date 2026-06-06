@@ -40,6 +40,7 @@ export type Database = {
           support_messenger_url: string
           support_telegram_url: string
           support_whatsapp_url: string
+          support_youtube_url: string
           updated_at: string
           visit_api_url: string
         }
@@ -68,6 +69,7 @@ export type Database = {
           support_messenger_url?: string
           support_telegram_url?: string
           support_whatsapp_url?: string
+          support_youtube_url?: string
           updated_at?: string
           visit_api_url?: string
         }
@@ -96,6 +98,7 @@ export type Database = {
           support_messenger_url?: string
           support_telegram_url?: string
           support_whatsapp_url?: string
+          support_youtube_url?: string
           updated_at?: string
           visit_api_url?: string
         }

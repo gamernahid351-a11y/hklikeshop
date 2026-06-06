@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { Headphones, X, Send } from "lucide-react";
+import { Headphones, X, Send, Youtube } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Links = { whatsapp: string; telegram: string; messenger: string };
+type Links = { whatsapp: string; telegram: string; messenger: string; youtube: string };
 
 export function SupportButton() {
   const [open, setOpen] = useState(false);
-  const [links, setLinks] = useState<Links>({ whatsapp: "", telegram: "", messenger: "" });
+  const [links, setLinks] = useState<Links>({ whatsapp: "", telegram: "", messenger: "", youtube: "" });
 
   useEffect(() => {
     supabase
       .from("app_settings")
-      .select("support_whatsapp_url, support_telegram_url, support_messenger_url, admin_telegram")
+      .select("support_whatsapp_url, support_telegram_url, support_messenger_url, support_youtube_url, admin_telegram")
       .eq("id", 1)
       .maybeSingle()
       .then(({ data }) => {
@@ -21,6 +21,7 @@ export function SupportButton() {
           whatsapp: d.support_whatsapp_url || "",
           telegram: tg,
           messenger: d.support_messenger_url || "",
+          youtube: d.support_youtube_url || "",
         });
       });
   }, []);
@@ -29,6 +30,7 @@ export function SupportButton() {
     { key: "whatsapp", label: "WhatsApp", color: "#25D366", url: links.whatsapp, icon: WhatsAppIcon },
     { key: "telegram", label: "Telegram", color: "#229ED9", url: links.telegram, icon: Send },
     { key: "messenger", label: "Messenger", color: "#0084FF", url: links.messenger, icon: MessengerIcon },
+    { key: "youtube", label: "YouTube", color: "#FF0000", url: links.youtube, icon: Youtube },
   ].filter((i) => i.url);
 
   return (
@@ -37,13 +39,13 @@ export function SupportButton() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label="Support"
-        className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full grid place-items-center bg-gradient-primary text-primary-foreground shadow-[0_0_24px_rgba(30,102,255,0.55)] ring-2 ring-primary/40"
+        className="fixed bottom-5 left-5 z-50 w-12 h-12 rounded-full grid place-items-center bg-gradient-primary text-primary-foreground shadow-[0_0_20px_rgba(30,102,255,0.5)] ring-2 ring-primary/40"
       >
-        {open ? <X className="w-6 h-6" /> : <Headphones className="w-6 h-6" />}
+        {open ? <X className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-5 z-50 flex flex-col items-end gap-3 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-20 left-5 z-50 flex flex-col items-start gap-3 animate-in fade-in slide-in-from-bottom-2">
           {items.length === 0 && (
             <div className="px-3 py-2 rounded-lg bg-card border border-border text-xs text-muted-foreground shadow-lg">
               No contacts configured
@@ -58,7 +60,7 @@ export function SupportButton() {
               onClick={() => setOpen(false)}
               aria-label={it.label}
               title={it.label}
-              className="w-12 h-12 rounded-full grid place-items-center text-white shadow-lg ring-2 ring-white/40 hover:scale-110 transition"
+              className="w-11 h-11 rounded-full grid place-items-center text-white shadow-lg ring-2 ring-white/40 hover:scale-110 transition"
               style={{ backgroundColor: it.color }}
             >
               <it.icon className="w-5 h-5" />
