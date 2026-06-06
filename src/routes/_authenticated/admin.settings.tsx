@@ -159,6 +159,10 @@ function AdminSettings() {
               <Label>Messenger URL</Label>
               <Input value={s.support_messenger_url ?? ""} onChange={(e) => setS({ ...s, support_messenger_url: e.target.value })} placeholder="https://m.me/yourpage" />
             </div>
+            <div>
+              <Label>YouTube URL</Label>
+              <Input value={s.support_youtube_url ?? ""} onChange={(e) => setS({ ...s, support_youtube_url: e.target.value })} placeholder="https://youtube.com/@yourchannel" />
+            </div>
           </div>
         </div>
 
