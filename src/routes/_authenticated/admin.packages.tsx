@@ -24,6 +24,7 @@ type Pkg = {
   is_active: boolean;
   sort_order: number;
   like_api_url: string | null;
+  is_free: boolean;
 };
 
 const empty: Omit<Pkg, "id"> = {
@@ -35,6 +36,7 @@ const empty: Omit<Pkg, "id"> = {
   is_active: true,
   sort_order: 0,
   like_api_url: "",
+  is_free: false,
 };
 
 function AdminPackages() {
@@ -46,7 +48,7 @@ function AdminPackages() {
   async function load() {
     const { data } = await supabase
       .from("packages")
-      .select("id,name,description,likes_per_day,duration_days,price_bdt,is_active,sort_order,like_api_url")
+      .select("id,name,description,likes_per_day,duration_days,price_bdt,is_active,sort_order,like_api_url,is_free")
       .eq("type", "like")
       .order("sort_order");
     setItems((data ?? []) as Pkg[]);
@@ -71,7 +73,8 @@ function AdminPackages() {
         visits_count: 0,
         image_url: null,
         category_id: null,
-        price_bdt: Number(form.price_bdt),
+        is_free: form.is_free,
+        price_bdt: form.is_free ? 0 : Number(form.price_bdt),
         likes_per_day: Number(form.likes_per_day),
         duration_days: Number(form.duration_days),
         like_api_url: form.like_api_url?.trim() || null,
@@ -124,7 +127,7 @@ function AdminPackages() {
             <div className="w-11 h-11 rounded-2xl bg-primary/10 grid place-items-center shrink-0"><Heart className="w-5 h-5 text-primary" /></div>
             <div className="flex-1 min-w-0">
               <div className="font-semibold truncate">{p.name}{!p.is_active && <span className="text-xs text-muted-foreground ml-1">(hidden)</span>}</div>
-              <div className="text-xs text-muted-foreground">{p.likes_per_day}/day × {p.duration_days}d • ৳{Number(p.price_bdt)}</div>
+              <div className="text-xs text-muted-foreground">{p.likes_per_day}/day × {p.duration_days}d • {p.is_free ? <span className="text-success font-bold">FREE</span> : <>৳{Number(p.price_bdt)}</>}</div>
               {p.like_api_url && <div className="text-[10px] text-success truncate mt-0.5">API: {p.like_api_url}</div>}
             </div>
             <div className="flex gap-2">
@@ -146,7 +149,14 @@ function AdminPackages() {
             <div className="grid grid-cols-3 gap-2">
               <div><Label>Likes/day</Label><Input type="number" value={form.likes_per_day} onChange={(e) => setForm({ ...form, likes_per_day: Number(e.target.value) })} /></div>
               <div><Label>Days</Label><Input type="number" value={form.duration_days} onChange={(e) => setForm({ ...form, duration_days: Number(e.target.value) })} /></div>
-              <div><Label>Price ৳</Label><Input type="number" value={form.price_bdt} onChange={(e) => setForm({ ...form, price_bdt: Number(e.target.value) })} /></div>
+              <div><Label>Price ৳</Label><Input type="number" disabled={form.is_free} value={form.is_free ? 0 : form.price_bdt} onChange={(e) => setForm({ ...form, price_bdt: Number(e.target.value) })} /></div>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+              <div>
+                <Label>Free package</Label>
+                <div className="text-[10px] text-muted-foreground">Free hole price 0 hobe. User protidin nije claim korbe, auto delivery hobe na.</div>
+              </div>
+              <Switch checked={form.is_free} onCheckedChange={(v) => setForm({ ...form, is_free: v, price_bdt: v ? 0 : form.price_bdt })} />
             </div>
             <div>
               <Label>Like API URL <span className="text-xs text-muted-foreground">(use {"{uid}"} placeholder)</span></Label>

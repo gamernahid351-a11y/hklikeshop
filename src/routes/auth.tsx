@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import hkLogo from "@/assets/hk-logo.jpg.asset.json";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Login • HK Like Shop" }] }),
+  head: () => ({ meta: [{ title: "Login • MEHEDI LIKE" }] }),
   component: AuthPage,
 });
 
@@ -58,8 +58,8 @@ function AuthPage() {
     <div className="min-h-screen bg-gradient-hero flex flex-col">
       <header className="px-5 py-4 max-w-6xl w-full mx-auto">
         <Link to="/" className="flex items-center gap-2 w-fit">
-          <img src={hkLogo.url} alt="HK Like Shop" className="w-9 h-9 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
-          <span className="font-display font-bold text-lg">HK LIKE <span className="text-primary">SHOP</span></span>
+          <img src={hkLogo.url} alt="MEHEDI LIKE" className="w-9 h-9 rounded-lg object-cover ring-1 ring-primary/40 shadow-glow" />
+          <span className="font-display font-bold text-lg">MEHEDI <span className="text-primary">LIKE</span></span>
         </Link>
       </header>
       <div className="flex-1 grid place-items-center px-5 py-8">
