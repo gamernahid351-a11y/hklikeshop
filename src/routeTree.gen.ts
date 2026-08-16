@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as ApiClaimFreeRouteImport } from './routes/api/claim-free'
 import { Route as ApiDispatchRouteImport } from './routes/api/dispatch'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
@@ -62,6 +63,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const ApiClaimFreeRoute = ApiClaimFreeRouteImport.update({
+  id: '/api/claim-free',
+  path: '/api/claim-free',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDispatchRoute = ApiDispatchRouteImport.update({
   id: '/api/dispatch',
@@ -208,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/api/claim-free': typeof ApiClaimFreeRoute
   '/api/dispatch': typeof ApiDispatchRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/api/claim-free': typeof ApiClaimFreeRoute
   '/api/dispatch': typeof ApiDispatchRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/api/claim-free': typeof ApiClaimFreeRoute
   '/api/dispatch': typeof ApiDispatchRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin'
     | '/dashboard'
+    | '/api/claim-free'
     | '/api/dispatch'
     | '/admin/categories'
     | '/admin/coupons'
@@ -328,6 +338,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/api/claim-free'
     | '/api/dispatch'
     | '/admin/categories'
     | '/admin/coupons'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/api/claim-free'
     | '/api/dispatch'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/coupons'
@@ -389,6 +401,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiClaimFreeRoute: typeof ApiClaimFreeRoute
   ApiDispatchRoute: typeof ApiDispatchRoute
   ApiPublicBohudurWebhookRoute: typeof ApiPublicBohudurWebhookRoute
   ApiPublicCronLikesRoute: typeof ApiPublicCronLikesRoute
@@ -430,6 +443,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/api/claim-free': {
+      id: '/api/claim-free'
+      path: '/api/claim-free'
+      fullPath: '/api/claim-free'
+      preLoaderRoute: typeof ApiClaimFreeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/dispatch': {
       id: '/api/dispatch'
@@ -684,6 +704,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiClaimFreeRoute: ApiClaimFreeRoute,
   ApiDispatchRoute: ApiDispatchRoute,
   ApiPublicBohudurWebhookRoute: ApiPublicBohudurWebhookRoute,
   ApiPublicCronLikesRoute: ApiPublicCronLikesRoute,
