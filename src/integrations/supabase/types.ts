@@ -463,6 +463,7 @@ export type Database = {
           duration_days: number
           ff_uid: string | null
           id: string
+          is_free: boolean
           likes_per_day: number
           next_run_at: string | null
           package_id: string
@@ -492,6 +493,7 @@ export type Database = {
           duration_days?: number
           ff_uid?: string | null
           id?: string
+          is_free?: boolean
           likes_per_day?: number
           next_run_at?: string | null
           package_id: string
@@ -521,6 +523,7 @@ export type Database = {
           duration_days?: number
           ff_uid?: string | null
           id?: string
+          is_free?: boolean
           likes_per_day?: number
           next_run_at?: string | null
           package_id?: string
@@ -557,6 +560,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean
+          is_free: boolean
           like_api_url: string | null
           likes_per_day: number
           name: string
@@ -574,6 +578,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_free?: boolean
           like_api_url?: string | null
           likes_per_day?: number
           name: string
@@ -591,6 +596,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          is_free?: boolean
           like_api_url?: string | null
           likes_per_day?: number
           name?: string
@@ -938,6 +944,14 @@ export type Database = {
         Returns: {
           key_value: string
           message: string
+          success: boolean
+        }[]
+      }
+      claim_free_package: {
+        Args: { _ff_uid: string; _package_id: string }
+        Returns: {
+          message: string
+          order_id: string
           success: boolean
         }[]
       }
