@@ -25,9 +25,11 @@ async function handler({ request }: { request: Request }) {
     .from("orders")
     .select("*")
     .eq("status", "approved")
+    .eq("is_free", false) // free packages must be claimed manually by the user
     .not("next_run_at", "is", null)
     .lte("next_run_at", nowIso)
     .limit(50);
+
   if (error) return json({ error: error.message }, 500);
 
   const results: any[] = [];
