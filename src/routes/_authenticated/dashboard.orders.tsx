@@ -24,6 +24,7 @@ type Order = {
   next_run_at: string | null;
   created_at: string;
   rejection_reason: string | null;
+  is_free: boolean;
   packages: { name: string; price_bdt: number } | null;
 };
 type Log = { id: string; likes_sent?: number; success: boolean; error_message: string | null; created_at: string };
@@ -68,6 +69,29 @@ function OrdersPage() {
   const [likeLogs, setLikeLogs] = useState<Record<string, Log[]>>({});
   const [bannerUrl, setBannerUrl] = useState<string | null>(null);
   const [tab, setTab] = useState<"all" | "pending" | "approved" | "completed" | "rejected">("all");
+  const [claiming, setClaiming] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  async function claimFree(orderId: string) {
+    setClaiming(orderId);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error("Login again");
+      const res = await fetch(`/api/claim-free?order_id=${orderId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const body = await res.json();
+      if (!res.ok || !body?.success) throw new Error(body?.error || body?.errorMessage || "Claim failed");
+      toast.success(`${body.likesSent} likes claimed! Next claim 24 ghonta por.`);
+      setReloadKey((k) => k + 1);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setClaiming(null);
+    }
+  }
 
   useEffect(() => {
     if (!user) return;
@@ -76,7 +100,7 @@ function OrdersPage() {
       const { data: settings } = await supabase.from("app_settings").select("banner_api_url").eq("id", 1).single();
       const { data } = await supabase
         .from("orders")
-        .select("id,ff_uid,status,likes_per_day,duration_days,days_completed,total_likes_sent,next_run_at,created_at,rejection_reason,packages(name,price_bdt)")
+        .select("id,ff_uid,status,likes_per_day,duration_days,days_completed,total_likes_sent,next_run_at,created_at,rejection_reason,is_free,packages(name,price_bdt)")
         .eq("user_id", user.id)
         .eq("type", "like")
         .order("created_at", { ascending: false });
@@ -101,7 +125,7 @@ function OrdersPage() {
     load();
     const interval = window.setInterval(load, 30000);
     return () => { alive = false; window.clearInterval(interval); };
-  }, [user]);
+  }, [user, reloadKey]);
 
   const filtered = tab === "all" ? orders : orders.filter((o) => o.status === tab);
 
@@ -146,8 +170,21 @@ function OrdersPage() {
 
                 {o.status === "approved" && o.next_run_at && (
                   <div className="px-4 pb-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground"><Clock className="w-4 h-4" />Next delivery in</div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground"><Clock className="w-4 h-4" />{o.is_free ? "Next claim in" : "Next delivery in"}</div>
                     <Countdown to={o.next_run_at} />
+                  </div>
+                )}
+
+                {o.is_free && o.status === "approved" && (
+                  <div className="px-4 pb-4">
+                    <Button
+                      onClick={() => claimFree(o.id)}
+                      disabled={claiming === o.id || (!!o.next_run_at && new Date(o.next_run_at).getTime() > Date.now())}
+                      className="w-full bg-gradient-primary text-primary-foreground font-bold h-11"
+                    >
+                      {claiming === o.id ? "Claiming..." : (!!o.next_run_at && new Date(o.next_run_at).getTime() > Date.now()) ? "Claim available after countdown" : "Claim Today's Likes"}
+                    </Button>
+                    <div className="text-[10px] text-muted-foreground text-center mt-1">Free package — protidin nije claim korte hobe.</div>
                   </div>
                 )}
 
