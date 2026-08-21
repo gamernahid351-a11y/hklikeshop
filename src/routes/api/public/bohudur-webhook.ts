@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getBohudurApiKey } from "@/lib/bohudur-key.server";
 
 const BOHUDUR_BASE = "https://request.bohudur.one";
 
 async function handle(request: Request) {
-  const apiKey = process.env.BOHUDUR_API_KEY;
+  const apiKey = await getBohudurApiKey();
   if (!apiKey) return new Response("not configured", { status: 500 });
 
   let payload: any = {};

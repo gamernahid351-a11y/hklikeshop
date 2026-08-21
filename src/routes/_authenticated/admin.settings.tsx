@@ -44,10 +44,22 @@ function AdminSettings() {
   const [s, setS] = useState<S | null>(null);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [savingKey, setSavingKey] = useState(false);
 
   useEffect(() => {
     supabase.from("app_settings").select("*").eq("id", 1).single().then(({ data }) => setS(data as S));
+    supabase.from("secure_settings").select("bohudur_api_key").eq("id", 1).maybeSingle()
+      .then(({ data }) => setApiKey((data?.bohudur_api_key as string) ?? ""));
   }, []);
+
+  async function saveApiKey() {
+    setSavingKey(true);
+    const { error } = await supabase.from("secure_settings").update({ bohudur_api_key: apiKey.trim() }).eq("id", 1);
+    setSavingKey(false);
+    if (error) return toast.error(error.message);
+    toast.success("Payment gateway API key saved");
+  }
 
   async function save() {
     if (!s) return;
@@ -193,6 +205,19 @@ function AdminSettings() {
               <Label>Telegram Channel URL <span className="text-xs text-muted-foreground">(button on the notice)</span></Label>
               <Input value={s.landing_notice_telegram_url ?? ""} onChange={(e) => setS({ ...s, landing_notice_telegram_url: e.target.value })} placeholder="https://t.me/yourchannel" />
             </div>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-border">
+          <div className="font-display font-bold text-sm mb-2">Payment Gateway <span className="text-xs text-muted-foreground font-normal">(Bohudur API key — admin only)</span></div>
+          <div className="space-y-2">
+            <div>
+              <Label>Bohudur API Key</Label>
+              <Input type="password" value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="AH-BOHUDUR-API-KEY" />
+            </div>
+            <Button onClick={saveApiKey} disabled={savingKey} variant="outline" className="w-full">
+              {savingKey ? <Loader2 className="w-4 h-4 animate-spin"/> : "Save API key"}
+            </Button>
           </div>
         </div>
 

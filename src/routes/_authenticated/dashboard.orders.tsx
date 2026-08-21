@@ -188,6 +188,35 @@ function OrdersPage() {
                   </div>
                 )}
 
+                {o.is_free && (() => {
+                  const ok = logs.filter((l) => l.success);
+                  const totalClaimed = ok.reduce((sum, l) => sum + (l.likes_sent || 0), 0);
+                  const last = ok[0];
+                  return (
+                    <div className="px-4 pb-4">
+                      <div className="text-xs text-muted-foreground mb-2">Claim history</div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="bg-background/60 rounded-lg p-2.5 text-center">
+                          <div className="text-[10px] text-muted-foreground">Total claims</div>
+                          <div className="font-bold text-primary">{ok.length}</div>
+                        </div>
+                        <div className="bg-background/60 rounded-lg p-2.5 text-center">
+                          <div className="text-[10px] text-muted-foreground">Total claimed likes</div>
+                          <div className="font-bold text-success">{totalClaimed.toLocaleString()}</div>
+                        </div>
+                        <div className="bg-background/60 rounded-lg p-2.5 text-center">
+                          <div className="text-[10px] text-muted-foreground">Last claim</div>
+                          <div className="font-bold text-accent text-xs leading-tight">
+                            {last
+                              ? `${new Date(last.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} ${new Date(last.created_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`
+                              : "Never"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {o.status === "rejected" && o.rejection_reason && <div className="px-4 pb-3 text-sm text-destructive">Reason: {o.rejection_reason}</div>}
 
                 {logs.length > 0 && (

@@ -826,6 +826,27 @@ export type Database = {
         }
         Relationships: []
       }
+      secure_settings: {
+        Row: {
+          bohudur_api_key: string
+          created_at: string
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          bohudur_api_key?: string
+          created_at?: string
+          id?: number
+          updated_at?: string
+        }
+        Update: {
+          bohudur_api_key?: string
+          created_at?: string
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
