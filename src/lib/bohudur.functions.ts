@@ -15,9 +15,10 @@ export const createBohudurDeposit = createServerFn({ method: "POST" })
       .parse(input)
   )
   .handler(async ({ data, context }) => {
-    const apiKey = process.env.BOHUDUR_API_KEY;
+    const { getBohudurApiKey } = await import("./bohudur-key.server");
+    const apiKey = await getBohudurApiKey();
     if (!apiKey) {
-      console.error("[Bohudur] BOHUDUR_API_KEY not set");
+      console.error("[Bohudur] API key not configured");
       throw new Error("Payment gateway not configured. Please contact admin.");
     }
 
